@@ -4,6 +4,11 @@
   box-sizing: border-box;
 }
 
+html {
+  /* Prevent horizontal overflow on mobile */
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   background: var(--ngx-bg);
@@ -12,7 +17,14 @@ body {
   font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  /* iOS momentum scrolling */
+  -webkit-overflow-scrolling: touch;
 }
 
 a { color: var(--ngx-primary); }
 a:hover { color: var(--ngx-primary-hover); }
+
+/* Fluid typography scale for mobile */
+@media (max-width: 767px) {
+  body { font-size: 15px; }
+}

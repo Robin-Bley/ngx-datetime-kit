@@ -15,5 +15,16 @@
   border-radius: 6px;
   border: 1px solid var(--ngx-divider);
 }
-.demo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 32px; margin-bottom: 40px; }
+// Flexbox responsive card grid — replaces the former CSS Grid auto-fill layout
+.demo-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  margin-bottom: 40px;
+
+  > * {
+    flex: 1 1 280px; // Grow/shrink freely, minimum 280 px per card
+    max-width: 100%;
+  }
+}
 

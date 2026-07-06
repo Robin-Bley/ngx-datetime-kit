@@ -120,8 +120,17 @@ const status = computed<string>(() => ...); // explicit computed type
 
 ## CSS/Styling
 
-- Use CSS custom properties (`--ngx-*`) for all design tokens — no hardcoded colors
+- Use CSS custom properties (`--ngx-*`) for all design tokens — no hardcoded colors or sizes
 - Component styles go in `styles/index.scss` using BEM-like `.ngx-*` classes
+- **Flexbox-first layout**: all multi-element layouts use `display: flex`. CSS Grid is forbidden
+  - Panel body: `display: flex; flex-direction: row; align-items: stretch;`
+  - Calendar grid: `display: flex; flex-wrap: wrap;` with `flex: 0 0 calc((100% - 12px) / 7)` per cell
+  - Responsive changes via `flex-direction: column` / `flex-wrap: wrap` in breakpoint blocks
+- Reusable mixins live in `styles/_mixins.scss` — always `@use 'mixins' as *;` in `index.scss`
+  - Use `@include flex-row(...)`, `@include flex-col(...)`, `@include flex-center` for layout
+  - Use `@include mobile`, `@include tablet`, `@include desktop` for breakpoints
+  - Use `@include touch-target` for WCAG 2.5.5 minimum 44 × 44 px tap targets
+  - Use `@include text-truncate`, `@include scrollable-x`, `@include scrollable-y` as needed
 - Responsive breakpoints: 375px (mobile), 768px (tablet), 1280px+ (desktop)
 - Test explicitly at all three breakpoints
 
@@ -131,20 +140,31 @@ All components MUST be fully responsive across the three defined breakpoints.
 
 ### Panel behavior
 
-| Breakpoint                | Behavior                                                             |
-|---------------------------|----------------------------------------------------------------------|
+| Breakpoint                | Behavior                                                              |
+|---------------------------|-----------------------------------------------------------------------|
 | `< 768px` (mobile)        | Fixed bottom-sheet, full width, rounded top corners, max-height 90vh |
-| `768px – 1279px` (tablet) | Absolute drop-down, two-column layout (presets + content)            |
-| `≥ 1280px` (desktop)      | Absolute drop-down, three-column layout (presets + calendars + time) |
+| `768px – 1279px` (tablet) | Absolute drop-down, two-column flex layout (presets + content)        |
+| `≥ 1280px` (desktop)      | Absolute drop-down, three-column flex layout (presets + calendars + time) |
+
+### Flexbox layout structure
+
+```
+.ngx-panel__body  (display: flex; flex-direction: row)
+  ├── .ngx-presets        flex: 0 0 160px  (desktop) / 140px (tablet) / auto-row (mobile)
+  ├── .ngx-panel__calendars  flex: 1 1 auto
+  └── .ngx-panel__time-panel  flex: 0 0 210px (desktop) / 180px (tablet) / full-width row (mobile)
+```
 
 ### Rules
 
-- **Mobile bottom-sheet is CSS-driven**: use `@media (max-width: 767px)` — never read `window.innerWidth` in component logic for layout-only purposes
-- **Touch targets**: all interactive elements must be at least **44 × 44 px** (WCAG 2.5.5)
+- **Mobile bottom-sheet is CSS-driven**: use `@include mobile` / `@media (max-width: 767px)` — never read `window.innerWidth` in component logic for layout purposes
+- **Bottom-sheet drag handle**: `.ngx-panel::before` pseudo-element, customisable via `--ngx-bottom-handle-*` tokens
+- **Safe-area insets**: `env(safe-area-inset-bottom)` applied to panel padding on mobile (notched phones)
+- **Touch targets**: all interactive elements must be at least **44 × 44 px** — use `@include touch-target`
 - **Calendar cells**: minimum `36px` on desktop, minimum `40px` on mobile (larger tap area)
-- **Presets**: vertical sidebar on desktop; horizontal scrollable row on mobile/tablet
+- **Presets**: vertical sidebar on desktop (`flex-direction: column`); horizontal scrollable row on mobile (`@include scrollable-x`)
 - **Time selector columns**: flex row on desktop; wraps on mobile
-- **Calendars**: side-by-side on tablet+; stack vertically on mobile
+- **Calendars**: side-by-side on tablet+; stack vertically on mobile (`flex-direction: column`)
 
 ## Template Best Practices (Angular 22+)
 
@@ -193,7 +213,11 @@ models/        — TypeScript interfaces (TimeValue, DateRange, DateTimeRange, R
 tokens/        — DI tokens (adapter, formats, labels)
 utilities/     — pure functions (date-utils, format-duration, build-calendar-grid)
 validators/    — validateDateRangeCore + Reactive Forms ValidatorFn wrappers
-styles/        — SCSS variables + component styles
+styles/
+  ├── _variables.scss  — CSS custom property tokens (:root)
+  ├── _mixins.scss     — Flexbox helpers + breakpoint mixins (always @use'd first)
+  ├── index.scss       — All component BEM styles (Flexbox-first)
+  └── theme.scss       — Public entry point (re-exports index.scss)
 ```
 
 ## Future Extension Notes

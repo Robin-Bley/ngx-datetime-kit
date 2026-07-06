@@ -60,6 +60,16 @@
   --ngx-panel-min-width: 320px;
   --ngx-field-height: 44px;
   --ngx-calendar-cell-size: 36px;
+  --ngx-calendar-cell-size-mobile: 40px;
   --ngx-time-segment-width: 44px;
+
+  // Touch & mobile
+  --ngx-touch-target: 44px;
+  --ngx-panel-mobile-max-height: 90vh;
+
+  // Mobile bottom-sheet drag handle
+  --ngx-bottom-handle-width: 40px;
+  --ngx-bottom-handle-height: 4px;
+  --ngx-bottom-handle-color: var(--ngx-border);
 }
 

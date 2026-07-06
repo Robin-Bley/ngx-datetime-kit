@@ -40,8 +40,19 @@ All component state uses `signal()`, `computed()`, and `model()`. The `ControlVa
 ### 4. Inline Panel (not CDK Portal)
 The picker panel is rendered inline (conditionally via `@if`) rather than in a CDK portal. This keeps the component's DI context intact (tokens injected in the component subtree work correctly) and avoids cross-portal communication complexity.
 
-### 5. CSS Custom Properties
-All visual tokens are CSS custom properties (`--ngx-primary`, etc.) making theming trivial — just override them in your `:root` or a parent element.
+### 5. Flexbox-First Layout
+
+All multi-element layouts use `display: flex`. CSS Grid is not used anywhere in the library. This gives predictable, wrappable, responsive behaviour:
+
+- **Panel body**: `display: flex; flex-direction: row; align-items: stretch` with `flex: 0 0 <width>` on sidebar children
+- **Calendar grid**: `display: flex; flex-wrap: wrap` with `flex: 0 0 calc((100% - 12px) / 7)` per cell (7 items × 2px gap)
+- **Responsive**: `flex-direction: column` and `flex: 0 0 auto` override fixed widths on mobile
+
+Reusable flex mixins (`@include flex-row`, `@include flex-col`, `@include flex-center`, etc.) live in `styles/_mixins.scss` and are imported into `styles/index.scss`.
+
+### 6. CSS Custom Properties
+
+All visual tokens are CSS custom properties (`--ngx-primary`, etc.) making theming trivial — just override them in your `:root` or a parent element. See [`docs/customizing.md`](./customizing.md) for the full token reference and theming examples.
 
 ## Data Flow
 

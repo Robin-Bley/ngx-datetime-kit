@@ -75,7 +75,7 @@
 .app-nav__github:hover { background: var(--ngx-surface-offset); color: var(--ngx-text); }
 .app-main { flex: 1; padding: 40px 48px; overflow-y: auto; background: var(--ngx-bg); }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .app-layout { flex-direction: column; }
   .app-nav {
     width: 100%;
@@ -84,10 +84,21 @@
     flex-direction: row;
     flex-wrap: wrap;
     padding: 12px 16px;
+    padding-top: max(12px, env(safe-area-inset-top, 0));
+    overflow-x: auto;
   }
 
   .app-nav__brand { border-bottom: none; padding-bottom: 0; }
-  .app-nav__links { flex-direction: row; flex-wrap: wrap; }
-  .app-main { padding: 24px 16px; }
+  .app-nav__links {
+    flex-direction: row;
+    flex-wrap: wrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+  .app-main {
+    padding: 24px 16px;
+    padding-bottom: max(24px, env(safe-area-inset-bottom, 0));
+  }
 }
 

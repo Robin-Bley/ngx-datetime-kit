@@ -1,4 +1,5 @@
 @use 'variables' as *;
+@use 'mixins' as *;
 
 // ── Picker field (trigger) ────────────────────────────────────────────────────
 .ngx-picker-field {
@@ -57,9 +58,7 @@
   &__value {
     flex: 1;
     font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    @include text-truncate;
   }
 
   &__placeholder {
@@ -116,21 +115,6 @@
     display: block;
   }
 
-  &--mobile {
-    position: fixed !important;
-    inset: 0;
-    top: auto;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    border-radius: var(--ngx-radius-xl) var(--ngx-radius-xl) 0 0;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-
   &__header {
     display: flex;
     align-items: flex-start;
@@ -153,6 +137,7 @@
   }
 
   &__close {
+    flex: none;
     width: 32px;
     height: 32px;
     border-radius: var(--ngx-radius-full);
@@ -164,7 +149,6 @@
     color: var(--ngx-text-muted);
     cursor: pointer;
     transition: background var(--ngx-transition), color var(--ngx-transition);
-    flex: none;
 
     &:hover {
       background: var(--ngx-border);
@@ -172,34 +156,41 @@
     }
   }
 
+  // ── Panel body — Flexbox three-column layout ──────────────────────────────
+  // Default (desktop): [presets 160px] [calendars flex] [time 210px]
+  // Modifier --no-time:    [presets 160px] [calendars flex]
+  // Modifier --date-time:  [calendar flex] [time selector]  (side by side, wrappable)
+  // Modifier --single-calendar: single child with padding
+  // Modifier --time-only:  centered single child
   &__body {
-    display: grid;
-    grid-template-columns: 160px 1fr 210px;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
 
-    &--single-calendar,
-    &--date-time {
-      grid-template-columns: 1fr;
+    // Single date picker: calendar only, padded
+    &--single-calendar {
       padding: 20px 24px;
     }
 
+    // Time-only picker: centered time selector
     &--time-only {
       padding: 24px;
-      display: flex;
       justify-content: center;
     }
 
-    &--no-time {
-      grid-template-columns: 160px 1fr;
+    // Date-time picker: calendar + time side by side
+    &--date-time {
+      flex-wrap: wrap;
+      gap: 24px;
+      padding: 20px 24px;
     }
 
-    &--date-time {
-      display: flex;
-      gap: 24px;
-      flex-wrap: wrap;
-    }
+    // Date-range-picker (--no-time) works automatically because
+    // .ngx-presets has flex: 0 0 160px and .ngx-panel__calendars has flex: 1 1 auto
   }
 
   &__calendars {
+    flex: 1 1 auto;
     padding: 20px 24px;
     display: flex;
     gap: 24px;
@@ -207,7 +198,8 @@
   }
 
   &__time-panel {
-    padding: 20px 20px 20px;
+    flex: 0 0 210px;
+    padding: 20px;
     border-left: 1px solid var(--ngx-divider);
     display: flex;
     flex-direction: column;
@@ -245,13 +237,11 @@
   }
 
   &__footer-preview {
-    font-size: var(--ngx-font-size-sm);
-    color: var(--ngx-text-muted);
     flex: 1;
     min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-size: var(--ngx-font-size-sm);
+    color: var(--ngx-text-muted);
+    @include text-truncate;
   }
 
   &__actions {
@@ -262,7 +252,9 @@
 }
 
 // ── Presets panel ─────────────────────────────────────────────────────────────
+// flex: 0 0 160px — fixed sidebar width within the Flexbox panel body
 .ngx-presets {
+  flex: 0 0 160px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -313,10 +305,10 @@
   }
 
   &__month-title {
+    flex: 1;
     font-weight: 600;
     font-size: var(--ngx-font-size-base);
     color: var(--ngx-text);
-    flex: 1;
     text-align: center;
   }
 
@@ -350,14 +342,19 @@
     flex: none;
   }
 
+  // ── Flexbox-based 7-column calendar grid ───────────────────────────────────
+  // Each weekday header and day cell occupies (100% - 6 gaps) / 7 of the row.
+  // --_total-gap = (columns - 1) × gap = 6 × 2px = 12px
   &__grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    --_total-gap: 12px;
+    display: flex;
+    flex-wrap: wrap;
     gap: 2px;
     text-align: center;
   }
 
   &__weekday {
+    flex: 0 0 calc((100% - var(--_total-gap, 12px)) / 7);
     font-size: var(--ngx-font-size-xs);
     color: var(--ngx-text-faint);
     font-weight: 600;
@@ -366,9 +363,9 @@
 
   &__day {
     position: relative;
+    flex: 0 0 calc((100% - var(--_total-gap, 12px)) / 7);
     font-size: var(--ngx-font-size-sm);
     padding: 0;
-    width: 100%;
     aspect-ratio: 1;
     border: none;
     background: transparent;
@@ -411,7 +408,7 @@
     }
 
     &--range-single {
-      // Start and end are the same day — use full rounded corners like --selected.
+      // Start and end are the same day — full rounded corners
       background: var(--ngx-primary) !important;
       color: var(--ngx-text-inverse) !important;
       border-radius: var(--ngx-radius-sm) !important;
@@ -505,7 +502,7 @@
     font-weight: 700;
     font-size: var(--ngx-font-size-md);
     line-height: 1;
-    padding-top: 4px; // Align with display vertically
+    padding-top: 4px; // Align visually with display
   }
 }
 
@@ -566,11 +563,11 @@
   }
 }
 
-// ── Responsive — mobile-first (375px | 768px | 1280px+) ──────────────────────
+// ── Responsive — mobile-first (375 px | 768 px | 1280 px+) ───────────────────
 
-// ── Mobile (< 768px) ──────────────────────────────────────────────────────────
-@media (max-width: 767px) {
-  // Trigger field — larger touch targets
+// ── Mobile (< 768 px) ─────────────────────────────────────────────────────────
+@include mobile {
+  // Trigger field — bigger touch targets
   .ngx-picker-field {
     min-height: 48px;
     padding: 12px 14px;
@@ -581,7 +578,7 @@
     }
   }
 
-  // Panel — CSS-driven bottom-sheet (no JS needed)
+  // Panel — CSS-driven bottom-sheet (no JS for layout)
   .ngx-panel {
     position: fixed !important;
     inset: 0;
@@ -593,9 +590,20 @@
     max-width: 100% !important;
     min-width: 0 !important;
     border-radius: var(--ngx-radius-xl) var(--ngx-radius-xl) 0 0 !important;
-    max-height: 90vh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    max-height: var(--ngx-panel-mobile-max-height, 90vh);
+    @include scrollable-y;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+
+    // Swipe-down / drag handle indicator
+    &::before {
+      content: '';
+      display: block;
+      width: var(--ngx-bottom-handle-width, 40px);
+      height: var(--ngx-bottom-handle-height, 4px);
+      background: var(--ngx-bottom-handle-color, var(--ngx-border));
+      border-radius: var(--ngx-radius-full);
+      margin: 12px auto 0;
+    }
 
     &__header {
       padding: 16px 16px 12px;
@@ -605,50 +613,65 @@
       background: var(--ngx-surface);
     }
 
+    // Body — stack all sections vertically on mobile
     &__body {
-      grid-template-columns: 1fr !important;
-      padding: 12px 16px !important;
+      flex-direction: column !important;
+      padding: 0 !important;
       gap: 0;
 
-      // DateTime panel — stack calendar + time vertically
       &--date-time {
-        flex-direction: column;
+        flex-direction: column !important;
+        padding: 12px 16px !important;
         gap: 16px !important;
+      }
+
+      &--single-calendar {
+        padding: 12px 16px !important;
+      }
+
+      &--time-only {
+        padding: 24px 16px !important;
       }
     }
 
     &__calendars {
-      padding: 0;
       flex-direction: column;
       gap: 16px;
+      padding: 12px 16px;
     }
 
+    // Time panel — horizontal row on mobile, wraps if needed
     &__time-panel {
-      border-left: none;
-      border-top: 1px solid var(--ngx-divider);
+      flex: 0 0 auto;
       flex-direction: row;
       flex-wrap: wrap;
       gap: 16px;
-      padding: 16px 0 0;
+      padding: 16px;
+      border-left: none;
+      border-top: 1px solid var(--ngx-divider);
+      justify-content: space-around;
     }
 
     &__footer {
       padding: 12px 16px;
+      padding-bottom: calc(12px + env(safe-area-inset-bottom, 0));
       position: sticky;
       bottom: 0;
       background: var(--ngx-surface-2);
     }
   }
 
-  // Presets — horizontal scrollable row
+  // Presets — horizontal scrollable row on mobile
   .ngx-presets {
+    flex: 0 0 auto;
     flex-direction: row;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    flex-wrap: wrap;
+    @include scrollable-x;
     border-right: none;
     border-bottom: 1px solid var(--ngx-divider);
     padding: 10px 16px;
     gap: 6px;
+    justify-content: space-around;
 
     &__btn {
       white-space: nowrap;
@@ -657,91 +680,115 @@
     }
   }
 
-  // Calendar cells — larger tap area on mobile
+  // Calendar cells — larger tap area on mobile (WCAG 2.5.5)
   .ngx-calendar {
     min-width: 100%;
 
     &__day {
-      min-height: 40px;
+      min-height: var(--ngx-calendar-cell-size-mobile, 40px);
     }
   }
 
   // Buttons — full width on mobile
   .ngx-btn {
     flex: 1;
-    min-height: 44px;
+    min-height: var(--ngx-touch-target, 44px);
     justify-content: center;
   }
 }
 
-// ── Tablet (768px – 1279px) ────────────────────────────────────────────────────
-@media (min-width: 768px) and (max-width: 1279px) {
-  .ngx-panel {
-    &__body {
-      // DateTime-range: fall back to two-column when viewport is constrained
-      grid-template-columns: 140px 1fr !important;
+// ── Tablet (768 px – 1279 px) ─────────────────────────────────────────────────
+@include tablet {
+  // Narrower sidebar and time panel at tablet
+  .ngx-presets {
+    flex: 0 0 auto;
+    flex-direction: row;
+    @include scrollable-x;
+    border-right: none;
+    border-bottom: 1px solid var(--ngx-divider);
+    gap: 8px;
+    justify-content: space-around;
+    padding: 12px 16px;
 
-      // Single calendar / date-time body: keep 1fr (override above rule)
+    &__btn {
+      white-space: nowrap;
+      padding: 9px 14px;
+      font-size: var(--ngx-font-size-sm);
+    }
+  }
+
+  .ngx-panel {
+    &__time-panel {
+      flex: 0 0 auto;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-left: none;
+      border-top: 1px solid var(--ngx-divider);
+      padding: 16px;
+      justify-content: space-around;
+      width: 100%;
+    }
+
+    // Allow wrap at constrained tablet widths; individual modifier resets below
+    &__body {
+      flex-wrap: wrap;
+
+      // These layouts should not wrap — they manage their own children
       &--single-calendar,
       &--date-time {
-        grid-template-columns: 1fr !important;
+        flex-wrap: nowrap;
       }
-
-      // No-time pickers: two-column presets + calendars
-      &--no-time {
-        grid-template-columns: 140px 1fr !important;
-      }
-    }
-
-    // Hide time panel from grid on tablet (already inside body flex area for date-time)
-    &__time-panel {
-      min-width: 180px;
     }
   }
 }
 
-// ── Desktop (≥ 1280px) ────────────────────────────────────────────────────────
-// Default styles above already target desktop; this block adds explicit overrides
-// to ensure the three-column layout is restored if viewport was resized.
-@media (min-width: 1280px) {
-  .ngx-panel {
-    &__body {
-      grid-template-columns: 160px 1fr 210px;
-
-      &--single-calendar {
-        grid-template-columns: 1fr;
-      }
-
-      &--date-time {
-        display: flex;
-      }
-
-      &--no-time {
-        grid-template-columns: 160px 1fr;
-      }
-
-      &--time-only {
-        display: flex;
-      }
-    }
-  }
-
-  // Presets — vertical sidebar on desktop
+// ── Desktop (≥ 1280 px) ───────────────────────────────────────────────────────
+// Restore full widths if viewport was resized from tablet
+@include desktop {
   .ngx-presets {
+    flex: 0 0 160px;
     flex-direction: column;
+    height: 100%;
     border-bottom: none;
     border-right: 1px solid var(--ngx-divider);
+    padding: 16px;
+    gap: 4px;
+
+    &__btn {
+      padding: 9px 10px;
+      font-size: var(--ngx-font-size-sm);
+    }
+  }
+
+  .ngx-panel {
+    &__body {
+      flex-wrap: nowrap;
+    }
+
+    &__calendars {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    &__time-panel {
+      flex: 0 0 210px;
+      flex-direction: column;
+      border-left: 1px solid var(--ngx-divider);
+      border-top: none;
+      padding: 20px;
+      gap: 20px;
+      justify-content: flex-start;
+    }
   }
 }
 
-// ── Touch devices ─────────────────────────────────────────────────────────────
-// Disable hover effects where the device has no fine pointer (touch screens).
-@media (hover: none) and (pointer: coarse) {
+// ── Touch devices — ensure minimum tap targets ─────────────────────────────────
+@include touch-device {
   .ngx-calendar__nav-btn,
   .ngx-presets__btn,
   .ngx-time-selector__btn {
-    min-width: 44px;
-    min-height: 44px;
+    @include touch-target;
   }
 }
 

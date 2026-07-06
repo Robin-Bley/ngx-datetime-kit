@@ -1,0 +1,94 @@
+// ngx-datetime-kit — SCSS Flexbox mixins & breakpoint helpers
+// All layout helpers are Flexbox-based.
+
+// ── Flexbox layout helpers ─────────────────────────────────────────────────
+
+/// Horizontal flex row
+@mixin flex-row($justify: flex-start, $align: center, $gap: 0) {
+  display: flex;
+  flex-direction: row;
+  justify-content: $justify;
+  align-items: $align;
+  @if $gap != 0 { gap: $gap; }
+}
+
+/// Vertical flex column
+@mixin flex-col($justify: flex-start, $align: stretch, $gap: 0) {
+  display: flex;
+  flex-direction: column;
+  justify-content: $justify;
+  align-items: $align;
+  @if $gap != 0 { gap: $gap; }
+}
+
+/// Center both axes
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/// Space-between with optional vertical alignment
+@mixin flex-between($align: center) {
+  display: flex;
+  align-items: $align;
+  justify-content: space-between;
+}
+
+// ── Breakpoints ─────────────────────────────────────────────────────────────
+
+/// Mobile — max 767 px
+@mixin mobile {
+  @media (max-width: 767px) { @content; }
+}
+
+/// Tablet — 768 px – 1279 px
+@mixin tablet {
+  @media (min-width: 768px) and (max-width: 1279px) { @content; }
+}
+
+/// Desktop — 1280 px and above
+@mixin desktop {
+  @media (min-width: 1280px) { @content; }
+}
+
+/// Tablet and above (768 px+)
+@mixin tablet-up {
+  @media (min-width: 768px) { @content; }
+}
+
+/// Touch / coarse-pointer devices
+@mixin touch-device {
+  @media (hover: none) and (pointer: coarse) { @content; }
+}
+
+// ── Utilities ────────────────────────────────────────────────────────────────
+
+/// WCAG 2.5.5 — minimum 44 × 44 px touch target
+@mixin touch-target($size: 44px) {
+  min-width: $size;
+  min-height: $size;
+}
+
+/// Single-line text truncation with ellipsis
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/// Horizontally scrollable container (hidden scrollbar)
+@mixin scrollable-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+/// Vertically scrollable container (thin scrollbar)
+@mixin scrollable-y {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
