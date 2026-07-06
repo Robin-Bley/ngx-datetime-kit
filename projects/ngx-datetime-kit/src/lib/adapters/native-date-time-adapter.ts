@@ -240,15 +240,21 @@ export class NgxNativeDateTimeAdapter extends NgxDateTimeAdapter<Date> {
   }
 
   override getFirstDayOfWeek(): number {
-    // Use Intl.Locale if available (modern browsers), fallback to Monday (1)
+    // Use Intl.Locale if available (modern browsers), fallback to en-US default (Monday)
     try {
-      const locale = new Intl.Locale(this.locale) as Intl.Locale & { weekInfo?: { firstDay: number } };
-      const firstDay = locale.weekInfo?.firstDay ?? 1;
-      // Intl returns 7 for Sunday in some locales; normalize to 0
-      return firstDay === 7 ? 0 : firstDay;
+      const locale = new Intl.Locale(this.locale);
+      const weekInfo = (locale as Intl.Locale & { weekInfo?: { firstDay: number } }).weekInfo;
+      if (weekInfo?.firstDay !== undefined) {
+        // Intl.Locale.weekInfo.firstDay: 1=Mon, 2=Tue, ..., 7=Sun
+        // JavaScript Date.getDay(): 0=Sun, 1=Mon, ..., 6=Sat
+        // Convert Intl's 7 (Sunday) to our 0 (Sunday)
+        return weekInfo.firstDay === 7 ? 0 : weekInfo.firstDay;
+      }
     } catch {
-      return 1; // Default to Monday
+      // Intl.Locale not supported or weekInfo unavailable
     }
+    // Default: Monday (1) for most locales
+    return 1;
   }
 }
 

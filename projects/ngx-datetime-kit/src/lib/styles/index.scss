@@ -95,8 +95,9 @@
   top: calc(100% + 8px);
   left: 0;
   width: max-content;
-  max-width: var(--ngx-panel-max-width);
-  min-width: var(--ngx-panel-min-width);
+  // Default size (DateTimeRangePicker)
+  max-width: var(--ngx-panel-w-default);
+  min-width: var(--ngx-panel-minw-default);
   background: var(--ngx-surface);
   border: 1px solid var(--ngx-border);
   border-radius: var(--ngx-radius-xl);
@@ -104,6 +105,78 @@
   overflow: hidden;
   font-family: var(--ngx-font-family);
   animation: ngx-panel-in 150ms ease;
+
+  // ── Per-type sizing via :has() ─────────────────────────────────────────────
+  // DateRangePicker: presets + 2 calendars (no time panel)
+  &:has(.ngx-panel__body--no-time) {
+    max-width: var(--ngx-panel-w-range);
+    min-width: var(--ngx-panel-minw-range);
+  }
+
+  // DateTimePicker: single calendar + time stacked
+  &:has(.ngx-panel__body--date-time) {
+    max-width: var(--ngx-panel-w-datetime);
+    min-width: var(--ngx-panel-minw-datetime);
+
+    // ── Compact time panel: no background, less padding ─────────────────────
+    .ngx-panel__time-panel {
+      flex: 0 0 auto;
+      padding: 12px 0 0 0;
+      background: transparent;
+      justify-content: center;
+      align-items: center;
+      border: 0;
+    }
+
+    // ── Footer layout: stack preview above buttons ─────────────────────────
+    .ngx-panel__footer {
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+    }
+
+    .ngx-panel__footer-preview {
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .ngx-panel__actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+
+  // DateRangePicker: presets + calendars (no time)
+  &:has(.ngx-panel__body--no-time) {
+    // ── Footer layout: stack preview above buttons ─────────────────────────
+    .ngx-panel__footer {
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+    }
+
+    .ngx-panel__footer-preview {
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .ngx-panel__actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+
+  // DatePicker: single calendar only
+  &:has(.ngx-panel__body--single-calendar) {
+    max-width: var(--ngx-panel-w-date);
+    min-width: var(--ngx-panel-minw-date);
+  }
+
+  // TimePicker: time selector only — compact
+  &:has(.ngx-panel__body--time-only) {
+    max-width: var(--ngx-panel-w-time);
+    min-width: var(--ngx-panel-minw-time);
+  }
 
   // Wrapper must be position: relative for absolute positioning to work
   ngx-date-time-range-picker,
@@ -172,18 +245,20 @@
       padding: 20px 24px;
     }
 
-    // Time-only picker: centered time selector
-    &--time-only {
-      padding: 24px;
-      justify-content: center;
-    }
+     // Time-only picker: centered time selector
+     &--time-only {
+       padding: 24px;
+       justify-content: center;
+       align-items: center;
+     }
 
-    // Date-time picker: calendar + time side by side
-    &--date-time {
-      flex-wrap: wrap;
-      gap: 24px;
-      padding: 20px 24px;
-    }
+     // Date-time picker: calendar + time stacked vertically
+     &--date-time {
+       flex-direction: column;
+       justify-content: center;
+       gap: 0;
+       padding: 20px 24px;
+     }
 
     // Date-range-picker (--no-time) works automatically because
     // .ngx-presets has flex: 0 0 160px and .ngx-panel__calendars has flex: 1 1 auto
@@ -203,6 +278,7 @@
     border-left: 1px solid var(--ngx-divider);
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 20px;
     background: var(--ngx-surface-2);
   }
@@ -390,7 +466,7 @@
       z-index: 1;
     }
 
-    &--placeholder {
+De    &--placeholder {
       visibility: hidden;
       pointer-events: none;
       cursor: default;
@@ -619,11 +695,11 @@
       padding: 0 !important;
       gap: 0;
 
-      &--date-time {
-        flex-direction: column !important;
-        padding: 12px 16px !important;
-        gap: 16px !important;
-      }
+       &--date-time {
+         flex-direction: column !important;
+         padding: 0 !important;
+         gap: 0 !important;
+       }
 
       &--single-calendar {
         padding: 12px 16px !important;
@@ -658,6 +734,19 @@
       position: sticky;
       bottom: 0;
       background: var(--ngx-surface-2);
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+    }
+
+    &__footer-preview {
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    &__actions {
+      width: 100%;
+      justify-content: flex-end;
     }
   }
 
@@ -699,6 +788,10 @@
 
 // ── Tablet (768 px – 1279 px) ─────────────────────────────────────────────────
 @include tablet {
+  .ngx-panel{
+    max-width: 650px;
+  }
+
   // Narrower sidebar and time panel at tablet
   .ngx-presets {
     flex: 0 0 auto;
@@ -717,30 +810,50 @@
     }
   }
 
-  .ngx-panel {
-    &__time-panel {
-      flex: 0 0 auto;
-      flex-direction: row;
-      flex-wrap: wrap;
-      gap: 12px;
-      border-left: none;
-      border-top: 1px solid var(--ngx-divider);
-      padding: 16px;
-      justify-content: space-around;
-      width: 100%;
-    }
+   .ngx-panel {
+     &__time-panel {
+       flex: 0 0 auto;
+       flex-direction: row;
+       flex-wrap: wrap;
+       gap: 12px;
+       border-left: none;
+       border-top: 1px solid var(--ngx-divider);
+       padding: 16px;
+       justify-content: space-around;
+       width: 100%;
+     }
 
-    // Allow wrap at constrained tablet widths; individual modifier resets below
-    &__body {
-      flex-wrap: wrap;
+     // Allow wrap at constrained tablet widths; individual modifier resets below
+     &__body {
+       flex-wrap: wrap;
 
-      // These layouts should not wrap — they manage their own children
-      &--single-calendar,
-      &--date-time {
-        flex-wrap: nowrap;
-      }
-    }
-  }
+       // These layouts should not wrap — they manage their own children
+       &--single-calendar,
+       &--date-time {
+         flex-wrap: nowrap;
+       }
+     }
+
+     // DateRangePicker (--no-time): restore horizontal footer layout on tablet
+     &:has(.ngx-panel__body--no-time) {
+       .ngx-panel__footer {
+         flex-direction: row;
+         align-items: center;
+         justify-content: space-between;
+       }
+
+       .ngx-panel__footer-preview {
+         margin-bottom: 0;
+         flex: 1;
+         min-width: 0;
+       }
+
+       .ngx-panel__actions {
+         width: auto;
+         justify-content: flex-end;
+       }
+     }
+   }
 }
 
 // ── Desktop (≥ 1280 px) ───────────────────────────────────────────────────────
@@ -779,6 +892,26 @@
       padding: 20px;
       gap: 20px;
       justify-content: flex-start;
+    }
+
+    // DateRangePicker (--no-time): restore horizontal footer layout on desktop
+    &:has(.ngx-panel__body--no-time) {
+      .ngx-panel__footer {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .ngx-panel__footer-preview {
+        margin-bottom: 0;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .ngx-panel__actions {
+        width: auto;
+        justify-content: flex-end;
+      }
     }
   }
 }

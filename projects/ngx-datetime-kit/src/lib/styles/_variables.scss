@@ -55,13 +55,30 @@
   --ngx-font-size-md: 15px;
   --ngx-font-size-lg: 17px;
 
-  // Layout
-  --ngx-panel-max-width: 800px;
-  --ngx-panel-min-width: 320px;
+  // Layout — field & calendar
   --ngx-field-height: 44px;
   --ngx-calendar-cell-size: 36px;
   --ngx-calendar-cell-size-mobile: 40px;
   --ngx-time-segment-width: 44px;
+
+  // ── Panel dialog sizes per picker type (desktop ≥ 1280 px) ──────────────────
+  // max-width — override to resize each picker dialog
+  --ngx-panel-w-default:  1000px;   // DateTimeRangePicker  (presets + 2 cal + time)
+  --ngx-panel-w-range:    700px;   // DateRangePicker      (presets + 2 cal)
+  --ngx-panel-w-datetime: 340px;   // DateTimePicker       (cal + time stacked)
+  --ngx-panel-w-date:     340px;   // DatePicker           (single calendar)
+  --ngx-panel-w-time:     240px;   // TimePicker           (time selector only)
+
+  // min-width — prevents dialogs from becoming too narrow
+  --ngx-panel-minw-default:   340px;
+  --ngx-panel-minw-range:     300px;
+  --ngx-panel-minw-datetime:  260px;
+  --ngx-panel-minw-date:      250px;
+  --ngx-panel-minw-time:      160px;
+
+  // Legacy aliases (kept for backward-compat, point to default values)
+  --ngx-panel-max-width: var(--ngx-panel-w-default);
+  --ngx-panel-min-width: var(--ngx-panel-minw-default);
 
   // Touch & mobile
   --ngx-touch-target: 44px;
@@ -71,5 +88,16 @@
   --ngx-bottom-handle-width: 40px;
   --ngx-bottom-handle-height: 4px;
   --ngx-bottom-handle-color: var(--ngx-border);
+}
+
+// ── Tablet overrides for panel dialog sizes (768 px – 1279 px) ───────────────
+@media (min-width: 768px) and (max-width: 1279px) {
+  :root {
+    --ngx-panel-w-default:  720px;
+    --ngx-panel-w-range:    560px;
+    --ngx-panel-w-datetime: 360px;
+    --ngx-panel-w-date:     310px;
+    --ngx-panel-w-time:     220px;
+  }
 }
 

@@ -42,13 +42,16 @@ export function buildCalendarGrid<D>(
   const numDays = adapter.getNumDaysInMonth(year, month);
   const dayOfWeekFirst = adapter.getDayOfWeek(firstOfMonth);
 
-  // How many days to prepend from the previous month
-  let leadingDays = (dayOfWeekFirst - firstDayOfWeek + 7) % 7;
+  // How many days to prepend from the previous month.
+  // Calculate how far the first day is from the start of the week.
+  // e.g., if first day is Wednesday (3) and week starts Monday (1): offset = 2 days
+  // if first day is Sunday (0) and week starts Monday (1): offset = 6 days
+  const dayOffset: number = (dayOfWeekFirst - firstDayOfWeek + 7) % 7;
 
   const cells: Array<{ date: D; isCurrentMonth: boolean }> = [];
 
   // Leading days from the previous month
-  for (let i = leadingDays; i > 0; i--) {
+  for (let i = dayOffset; i > 0; i--) {
     cells.push({
       date: adapter.addDays(firstOfMonth, -i),
       isCurrentMonth: false,
@@ -64,15 +67,13 @@ export function buildCalendarGrid<D>(
   }
 
   // Trailing days to complete the last row (always fill to 6 rows = 42 cells)
-  const totalCells = 42;
-  let trailingDay = 1;
+  const totalCells: number = 42;
   while (cells.length < totalCells) {
-    const lastDate = cells[cells.length - 1].date;
+    const lastDate: D = cells[cells.length - 1].date;
     cells.push({
       date: adapter.addDays(lastDate, 1),
       isCurrentMonth: false,
     });
-    trailingDay++;
   }
 
   return cells;

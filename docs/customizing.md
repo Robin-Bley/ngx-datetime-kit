@@ -71,12 +71,25 @@ Override them in `:root` for a global theme, or on a parent element for scoped t
   --ngx-font-size-lg:   17px;
 
   /* ── Layout ────────────────────────────────────────────── */
-  --ngx-panel-max-width:  800px;
-  --ngx-panel-min-width:  320px;
   --ngx-field-height:      44px;   /* Trigger button height */
   --ngx-calendar-cell-size:        36px;  /* Desktop day cell */
   --ngx-calendar-cell-size-mobile: 40px;  /* Mobile day cell */
   --ngx-time-segment-width: 44px;
+
+  /* ── Panel dialog sizes per picker type (desktop ≥ 1280 px) ── */
+  /* max-width: tune to resize each dialog individually          */
+  --ngx-panel-w-default:  860px;   /* DateTimeRangePicker (presets + 2 cal + time) */
+  --ngx-panel-w-range:    660px;   /* DateRangePicker     (presets + 2 cal) */
+  --ngx-panel-w-datetime: 380px;   /* DateTimePicker      (cal + time stacked) */
+  --ngx-panel-w-date:     340px;   /* DatePicker          (single calendar) */
+  --ngx-panel-w-time:     240px;   /* TimePicker          (time selector only) */
+
+  /* min-width: prevents dialogs from becoming too narrow */
+  --ngx-panel-minw-default:   340px;
+  --ngx-panel-minw-range:     300px;
+  --ngx-panel-minw-datetime:  260px;
+  --ngx-panel-minw-date:      250px;
+  --ngx-panel-minw-time:      160px;
 
   /* ── Touch & mobile ────────────────────────────────────── */
   --ngx-touch-target:           44px;   /* WCAG 2.5.5 minimum */
@@ -363,26 +376,33 @@ See [`docs/adapter.md`](./adapter.md) for the full adapter interface and a worke
 
 The library ships with three CSS breakpoints. Override the layout tokens to adapt them to your design system:
 
-| Token | Default | Purpose |
-|---|---|---|
-| `--ngx-panel-max-width` | `800px` | Maximum panel width on desktop |
-| `--ngx-panel-min-width` | `320px` | Minimum panel width |
-| `--ngx-panel-mobile-max-height` | `90vh` | Bottom-sheet max height |
-| `--ngx-calendar-cell-size` | `36px` | Day cell size on desktop |
-| `--ngx-calendar-cell-size-mobile` | `40px` | Day cell size on mobile |
-| `--ngx-touch-target` | `44px` | Min tap target (WCAG 2.5.5) |
+| Token | Desktop default | Tablet default | Purpose |
+|---|---|---|---|
+| `--ngx-panel-w-default` | `860px` | `720px` | DateTimeRangePicker max-width |
+| `--ngx-panel-w-range` | `660px` | `560px` | DateRangePicker max-width |
+| `--ngx-panel-w-datetime` | `380px` | `360px` | DateTimePicker max-width |
+| `--ngx-panel-w-date` | `340px` | `310px` | DatePicker max-width |
+| `--ngx-panel-w-time` | `240px` | `220px` | TimePicker max-width |
+| `--ngx-panel-minw-default` | `340px` | — | DateTimeRangePicker min-width |
+| `--ngx-panel-minw-range` | `300px` | — | DateRangePicker min-width |
+| `--ngx-panel-minw-datetime` | `260px` | — | DateTimePicker min-width |
+| `--ngx-panel-minw-date` | `250px` | — | DatePicker min-width |
+| `--ngx-panel-minw-time` | `160px` | — | TimePicker min-width |
+| `--ngx-panel-mobile-max-height` | — | — | Bottom-sheet max height (`90vh`) |
+| `--ngx-calendar-cell-size` | `36px` | — | Day cell size on desktop |
+| `--ngx-calendar-cell-size-mobile` | — | — | Day cell size on mobile (`40px`) |
+| `--ngx-touch-target` | `44px` | — | Min tap target (WCAG 2.5.5) |
 
-The actual breakpoint values (`767px`, `768px`, `1280px`) are in `styles/_mixins.scss` and cannot be changed via tokens. If you need different breakpoints, you can override the BEM classes inside your own media queries:
+The tablet token defaults are set automatically by the library via a `@media (min-width: 768px) and (max-width: 1279px)` block. You can override them in your own stylesheet:
 
 ```css
-/* Treat anything above 1024 px as "desktop" in your own override */
-@media (min-width: 1024px) {
-  .ngx-presets {
-    flex: 0 0 160px;
-    flex-direction: column;
-    border-right: 1px solid var(--ngx-divider);
-    border-bottom: none;
+/* Make the DateTimePicker even more compact on tablet */
+@media (min-width: 768px) and (max-width: 1279px) {
+  :root {
+    --ngx-panel-w-datetime: 320px;
   }
 }
 ```
+
+On mobile the panel always becomes a full-width bottom-sheet, so max/min-width tokens have no effect below 768 px.
 
