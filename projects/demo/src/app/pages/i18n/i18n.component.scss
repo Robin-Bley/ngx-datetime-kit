@@ -1,0 +1,13 @@
+.demo-page { max-width: 720px; }
+.demo-page__title { font-size: 28px; font-weight: 700; margin: 0 0 12px; }
+.demo-page__subtitle { font-size: 14px; color: var(--ngx-text-muted); margin: 0 0 40px; line-height: 1.6; }
+.demo-section { margin-bottom: 48px; }
+.demo-section h2 { font-size: 18px; font-weight: 600; margin: 0 0 8px; }
+.demo-desc { font-size: 13px; color: var(--ngx-text-muted); margin: 0 0 16px; }
+.demo-field { max-width: 480px; position: relative; margin-bottom: 12px; }
+.demo-code { font-size: 12px; color: var(--ngx-text-muted); background: var(--ngx-surface-offset); padding: 4px 8px; border-radius: 4px; }
+.demo-info { background: var(--ngx-surface); border: 1px solid var(--ngx-divider); border-radius: 8px; padding: 16px; font-size: 13px; }
+.demo-info p { margin: 0 0 8px; }
+pre { background: var(--ngx-surface-offset); padding: 8px 12px; border-radius: 4px; font-size: 12px; }
+code { background: var(--ngx-surface-offset); padding: 2px 5px; border-radius: 3px; }
+

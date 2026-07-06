@@ -1,0 +1,15 @@
+<div class="ngx-presets" role="listbox" [attr.aria-label]="labels.selectPeriod">
+  @for (preset of presets(); track preset.key) {
+    <button
+      class="ngx-presets__btn"
+      [class.ngx-presets__btn--active]="activeKey() === preset.key"
+      [attr.aria-selected]="activeKey() === preset.key"
+      role="option"
+      type="button"
+      (click)="onSelect(preset)"
+    >
+      {{ preset.label }}
+    </button>
+  }
+</div>
+

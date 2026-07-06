@@ -1,0 +1,19 @@
+.demo-page { max-width: 900px; }
+.demo-hero { margin-bottom: 48px; }
+.demo-hero__title { font-size: 32px; font-weight: 700; margin: 0 0 12px; color: var(--ngx-primary); }
+.demo-hero__subtitle { font-size: 16px; color: var(--ngx-text-muted); margin: 0; line-height: 1.6; max-width: 600px; }
+.demo-section { margin-bottom: 40px; }
+.demo-section__title { font-size: 18px; font-weight: 600; margin: 0 0 8px; }
+.demo-section__desc { font-size: 14px; color: var(--ngx-text-muted); margin: 0 0 16px; }
+.demo-field { max-width: 480px; position: relative; }
+.demo-value {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--ngx-text-muted);
+  background: var(--ngx-surface);
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--ngx-divider);
+}
+.demo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 32px; margin-bottom: 40px; }
+

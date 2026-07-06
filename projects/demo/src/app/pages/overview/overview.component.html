@@ -1,0 +1,81 @@
+<div class="demo-page">
+  <div class="demo-hero">
+    <h1 class="demo-hero__title">ngx-datetime-kit</h1>
+    <p class="demo-hero__subtitle">
+      Production-ready Date, Time &amp; Range Picker components for Angular 22+.
+      Accessible, i18n-ready, and compatible with both Reactive Forms and Signal Forms.
+    </p>
+  </div>
+
+  <section class="demo-section">
+    <h2 class="demo-section__title">DateTime Range Picker</h2>
+    <p class="demo-section__desc">
+      The flagship picker: dual calendar, time selection, presets, and duration calculation.
+    </p>
+    <div class="demo-field">
+      <ngx-date-time-range-picker [(value)]="dateTimeRange" />
+    </div>
+    @if (dateTimeRange()) {
+      <div class="demo-value">
+        <strong>Value:</strong> {{ dateTimeRange() | json }}
+      </div>
+    }
+  </section>
+
+  <section class="demo-section">
+    <h2 class="demo-section__title">Date Range Picker</h2>
+    <div class="demo-field">
+      <ngx-date-range-picker [(value)]="dateRange" />
+    </div>
+    @if (dateRange()) {
+      <div class="demo-value">
+        <strong>Value:</strong> {{ dateRange() | json }}
+      </div>
+    }
+  </section>
+
+  <div class="demo-grid">
+    <section class="demo-section">
+      <h2 class="demo-section__title">DateTime Picker</h2>
+      <div class="demo-field">
+        <ngx-date-time-picker [(value)]="dateTime" />
+      </div>
+      @if (dateTime()) {
+        <div class="demo-value">
+          <strong>Value:</strong> {{ dateTime() | json }}
+        </div>
+      }
+    </section>
+
+    <section class="demo-section">
+      <h2 class="demo-section__title">Date Picker</h2>
+      <div class="demo-field">
+        <ngx-date-picker [(value)]="date" />
+      </div>
+      @if (date()) {
+        <div class="demo-value">
+          <strong>Value:</strong> {{ date() | json }}
+        </div>
+      }
+    </section>
+
+    <section class="demo-section">
+      <h2 class="demo-section__title">Time Picker</h2>
+      <div class="demo-field">
+        <ngx-time-picker [(value)]="time" />
+      </div>
+      @if (time()) {
+        <div class="demo-value">
+          <strong>Value:</strong> {{ time() | json }}
+        </div>
+      }
+    </section>
+  </div>
+
+  <section class="demo-section">
+    <h2 class="demo-section__title">Disabled State</h2>
+    <div class="demo-field">
+      <ngx-date-time-range-picker [disabled]="true" />
+    </div>
+  </section>
+</div>

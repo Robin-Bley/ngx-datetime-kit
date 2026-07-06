@@ -1,0 +1,90 @@
+<div class="demo-page">
+  <h1 class="demo-page__title">Signal Forms Integration</h1>
+  <p class="demo-page__subtitle">
+    Picker components use <code>model()</code> signals internally.
+    Bind directly to your own <code>WritableSignal&lt;T&gt;</code> without the
+    <code>ControlValueAccessor</code> indirection.
+    <code>NgxSignalField</code> provides validation and touch-tracking as computed signals.
+  </p>
+
+  <section class="demo-section">
+    <h2>Example 2 — DateTimeRange with Signal Forms</h2>
+
+    <div class="demo-field">
+      <label class="demo-label">Period *</label>
+      <ngx-date-time-range-picker
+        [(value)]="rangeField.value"
+        [invalid]="rangeField.touched() && rangeField.errors() !== null"
+      />
+      @if (rangeField.touched() && rangeField.errors()?.['ngxEndBeforeStart']) {
+        <div class="demo-error">End date must be after start date</div>
+      }
+    </div>
+
+    <div class="demo-field">
+      <label class="demo-label">Single date (min: today)</label>
+      <ngx-date-picker
+        [(value)]="dateField.value"
+        [minDate]="today"
+        [invalid]="dateField.touched() && dateField.errors() !== null"
+      />
+      @if (dateField.touched() && dateField.errors()?.['ngxMinDate']) {
+        <div class="demo-error">Date must not be in the past</div>
+      }
+    </div>
+
+    <div class="demo-actions">
+      <button class="ngx-btn ngx-btn--ghost" type="button" (click)="resetForm()">Reset</button>
+      <button class="ngx-btn ngx-btn--primary" type="button" [disabled]="!isFormValid()" (click)="onSubmit()">Submit</button>
+    </div>
+
+    <div class="demo-status">
+      <div><strong>Range valid:</strong> {{ rangeField.valid() }}</div>
+      <div><strong>Date valid:</strong> {{ dateField.valid() }}</div>
+      <div><strong>Range errors:</strong></div>
+      <pre>{{ rangeField.errors() | json }}</pre>
+      <div><strong>Range value:</strong></div>
+      <pre>{{ rangeField.value() | json }}</pre>
+    </div>
+  </section>
+
+  <section class="demo-section">
+    <h2>Comparison: Reactive Forms vs. Signal Forms</h2>
+    <table class="demo-table">
+      <thead>
+        <tr>
+          <th>Criterion</th>
+          <th>Reactive Forms</th>
+          <th>Signal Forms</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Boilerplate</td>
+          <td>FormGroup / FormControl</td>
+          <td>createSignalField()</td>
+        </tr>
+        <tr>
+          <td>Binding</td>
+          <td>formControlName</td>
+          <td>[(value)]</td>
+        </tr>
+        <tr>
+          <td>Validation</td>
+          <td>ValidatorFn</td>
+          <td>Computed Signal</td>
+        </tr>
+        <tr>
+          <td>Reactivity</td>
+          <td>observables / statusChanges</td>
+          <td>computed() signal</td>
+        </tr>
+        <tr>
+          <td>Recommendation</td>
+          <td>Existing FormGroup infrastructure</td>
+          <td>New, signal-based components</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</div>

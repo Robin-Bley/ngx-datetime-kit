@@ -1,0 +1,65 @@
+// ngx-datetime-kit design tokens
+// Inspired by the prototype design: clean, professional, teal primary color
+
+:root {
+  // Surfaces
+  --ngx-bg: #f7f6f2;
+  --ngx-surface: #ffffff;
+  --ngx-surface-2: #fbfbf9;
+  --ngx-surface-offset: #f3f0ec;
+
+  // Borders
+  --ngx-border: #d4d1ca;
+  --ngx-divider: #dcd9d5;
+
+  // Text
+  --ngx-text: #28251d;
+  --ngx-text-muted: #7a7974;
+  --ngx-text-faint: #bab9b4;
+  --ngx-text-inverse: #f9f8f4;
+
+  // Primary (teal)
+  --ngx-primary: #01696f;
+  --ngx-primary-hover: #0c4e54;
+  --ngx-primary-highlight: #cedcd8;
+  --ngx-primary-light: #e8f3f2;
+
+  // Status colors
+  --ngx-error: #c0392b;
+  --ngx-error-bg: #fdf3f2;
+  --ngx-error-border: #e8a49f;
+  --ngx-success: #27ae60;
+  --ngx-warning: #e67e22;
+
+  // Radius
+  --ngx-radius-xs: 4px;
+  --ngx-radius-sm: 6px;
+  --ngx-radius-md: 8px;
+  --ngx-radius-lg: 12px;
+  --ngx-radius-xl: 16px;
+  --ngx-radius-full: 999px;
+
+  // Shadows
+  --ngx-shadow-sm: 0 2px 8px rgba(20, 30, 28, 0.08);
+  --ngx-shadow-md: 0 8px 24px rgba(20, 30, 28, 0.12), 0 2px 6px rgba(20, 30, 28, 0.06);
+  --ngx-shadow-lg: 0 24px 60px rgba(20, 30, 28, 0.18);
+
+  // Transitions
+  --ngx-transition: 150ms ease;
+
+  // Typography
+  --ngx-font-family: 'Work Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --ngx-font-size-xs: 11px;
+  --ngx-font-size-sm: 13px;
+  --ngx-font-size-base: 14px;
+  --ngx-font-size-md: 15px;
+  --ngx-font-size-lg: 17px;
+
+  // Layout
+  --ngx-panel-max-width: 800px;
+  --ngx-panel-min-width: 320px;
+  --ngx-field-height: 44px;
+  --ngx-calendar-cell-size: 36px;
+  --ngx-time-segment-width: 44px;
+}
+

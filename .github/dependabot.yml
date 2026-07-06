@@ -1,0 +1,29 @@
+version: 2
+
+updates:
+  # npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "05:00"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 1
+    labels:
+      - "dependencies"
+    groups:
+      all-dependencies:
+        dependency-types:
+          - "all"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 1
+    labels:
+      - "dependencies"
+      - "github-actions"

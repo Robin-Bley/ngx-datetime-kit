@@ -1,0 +1,44 @@
+{
+  "name": "ngx-datetime-kit",
+  "version": "0.1.0",
+  "description": "Production-ready Angular library for Date, Time, DateTime, and Range Picker components with full accessibility, i18n, and dual Forms support (Reactive + Signal).",
+  "author": {
+    "name": "Robin Bley",
+    "url": "https://github.com/Robin-Bley"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Robin-Bley/ngx-datetime-kit.git"
+  },
+  "homepage": "https://github.com/Robin-Bley/ngx-datetime-kit#readme",
+  "bugs": {
+    "url": "https://github.com/Robin-Bley/ngx-datetime-kit/issues"
+  },
+  "license": "MIT",
+  "keywords": [
+    "angular",
+    "date-picker",
+    "time-picker",
+    "datetime-picker",
+    "date-range-picker",
+    "datetime-range-picker",
+    "angular-component",
+    "angular-library",
+    "a11y",
+    "accessibility",
+    "i18n",
+    "signal-forms",
+    "reactive-forms",
+    "overlay",
+    "cdk"
+  ],
+  "peerDependencies": {
+    "@angular/common": "^22.0.0",
+    "@angular/core": "^22.0.0",
+    "@angular/forms": "^22.0.0",
+    "@angular/cdk": "^22.0.0"
+  },
+  "dependencies": {},
+  "sideEffects": false
+}
+

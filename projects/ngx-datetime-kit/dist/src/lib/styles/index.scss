@@ -1,0 +1,600 @@
+@use 'variables' as *;
+
+// ── Picker field (trigger) ────────────────────────────────────────────────────
+.ngx-picker-field {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: var(--ngx-field-height);
+  padding: 10px 14px;
+  background: var(--ngx-surface);
+  border: 1.5px solid var(--ngx-border);
+  border-radius: var(--ngx-radius-md);
+  box-shadow: var(--ngx-shadow-md);
+  cursor: pointer;
+  font-family: var(--ngx-font-family);
+  font-size: var(--ngx-font-size-md);
+  color: var(--ngx-text);
+  transition: border-color var(--ngx-transition), box-shadow var(--ngx-transition);
+  user-select: none;
+  outline: none;
+
+  &:hover:not(&--disabled) {
+    border-color: var(--ngx-primary);
+  }
+
+  &:focus-visible {
+    border-color: var(--ngx-primary);
+    box-shadow: var(--ngx-shadow-md), 0 0 0 3px rgba(1, 105, 111, 0.2);
+    outline: none;
+  }
+
+  &--open {
+    border-color: var(--ngx-primary);
+    box-shadow: var(--ngx-shadow-md), 0 0 0 3px rgba(1, 105, 111, 0.15);
+  }
+
+  &--invalid {
+    border-color: var(--ngx-error);
+    background: var(--ngx-error-bg);
+  }
+
+  &--disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    background: var(--ngx-surface-offset);
+  }
+
+  &__icon {
+    flex: none;
+    color: var(--ngx-primary);
+    display: flex;
+    align-items: center;
+  }
+
+  &__value {
+    flex: 1;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__placeholder {
+    color: var(--ngx-text-faint);
+    font-weight: 400;
+  }
+
+  &__clear {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    border-radius: var(--ngx-radius-full);
+    color: var(--ngx-text-faint);
+    cursor: pointer;
+    padding: 0;
+    transition: color var(--ngx-transition), background var(--ngx-transition);
+
+    &:hover {
+      color: var(--ngx-text);
+      background: var(--ngx-surface-offset);
+    }
+  }
+}
+
+// ── Panel container ───────────────────────────────────────────────────────────
+.ngx-panel {
+  position: absolute;
+  z-index: 1000;
+  top: calc(100% + 8px);
+  left: 0;
+  width: max-content;
+  max-width: var(--ngx-panel-max-width);
+  min-width: var(--ngx-panel-min-width);
+  background: var(--ngx-surface);
+  border: 1px solid var(--ngx-border);
+  border-radius: var(--ngx-radius-xl);
+  box-shadow: var(--ngx-shadow-lg);
+  overflow: hidden;
+  font-family: var(--ngx-font-family);
+  animation: ngx-panel-in 150ms ease;
+
+  // Wrapper must be position: relative for absolute positioning to work
+  ngx-date-time-range-picker,
+  ngx-date-range-picker,
+  ngx-date-time-picker,
+  ngx-date-picker,
+  ngx-time-picker {
+    position: relative;
+    display: block;
+  }
+
+  &--mobile {
+    position: fixed !important;
+    inset: 0;
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    border-radius: var(--ngx-radius-xl) var(--ngx-radius-xl) 0 0;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--ngx-divider);
+  }
+
+  &__title {
+    font-size: var(--ngx-font-size-lg);
+    font-weight: 600;
+    margin: 0;
+    color: var(--ngx-text);
+  }
+
+  &__preview {
+    font-size: var(--ngx-font-size-sm);
+    color: var(--ngx-text-muted);
+    margin: 4px 0 0;
+  }
+
+  &__close {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--ngx-radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: var(--ngx-surface-offset);
+    color: var(--ngx-text-muted);
+    cursor: pointer;
+    transition: background var(--ngx-transition), color var(--ngx-transition);
+    flex: none;
+
+    &:hover {
+      background: var(--ngx-border);
+      color: var(--ngx-text);
+    }
+  }
+
+  &__body {
+    display: grid;
+    grid-template-columns: 160px 1fr 210px;
+
+    &--single-calendar,
+    &--date-time {
+      grid-template-columns: 1fr;
+      padding: 20px 24px;
+    }
+
+    &--time-only {
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+    }
+
+    &--no-time {
+      grid-template-columns: 160px 1fr;
+    }
+
+    &--date-time {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+  }
+
+  &__calendars {
+    padding: 20px 24px;
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+  }
+
+  &__time-panel {
+    padding: 20px 20px 20px;
+    border-left: 1px solid var(--ngx-divider);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: var(--ngx-surface-2);
+  }
+
+  &__time-label {
+    font-size: var(--ngx-font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ngx-text-muted);
+    margin: 0 0 10px 0;
+    font-weight: 600;
+  }
+
+  &__duration {
+    font-size: 12.5px;
+    color: var(--ngx-text-muted);
+    background: var(--ngx-surface-offset);
+    padding: 8px 10px;
+    border-radius: var(--ngx-radius-sm);
+    margin-top: auto;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-top: 1px solid var(--ngx-divider);
+    background: var(--ngx-surface-2);
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  &__footer-preview {
+    font-size: var(--ngx-font-size-sm);
+    color: var(--ngx-text-muted);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 10px;
+    flex: none;
+  }
+}
+
+// ── Presets panel ─────────────────────────────────────────────────────────────
+.ngx-presets {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  border-right: 1px solid var(--ngx-divider);
+  background: var(--ngx-surface-2);
+
+  &__btn {
+    text-align: left;
+    padding: 9px 10px;
+    border-radius: var(--ngx-radius-sm);
+    border: none;
+    background: transparent;
+    color: var(--ngx-text);
+    font-size: var(--ngx-font-size-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background var(--ngx-transition);
+    font-family: var(--ngx-font-family);
+    white-space: nowrap;
+
+    &:hover {
+      background: var(--ngx-primary-light);
+    }
+
+    &--active {
+      background: var(--ngx-primary-highlight);
+      color: var(--ngx-primary-hover);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ngx-primary);
+      outline-offset: 1px;
+    }
+  }
+}
+
+// ── Calendar ──────────────────────────────────────────────────────────────────
+.ngx-calendar {
+  flex: 1;
+  min-width: 240px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  &__month-title {
+    font-weight: 600;
+    font-size: var(--ngx-font-size-base);
+    color: var(--ngx-text);
+    flex: 1;
+    text-align: center;
+  }
+
+  &__nav-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    border-radius: var(--ngx-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--ngx-text-faint);
+    transition: background var(--ngx-transition), color var(--ngx-transition);
+
+    &:hover {
+      background: var(--ngx-primary-light);
+      color: var(--ngx-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ngx-primary);
+      outline-offset: 1px;
+    }
+  }
+
+  &__nav-spacer {
+    width: 28px;
+    height: 28px;
+    flex: none;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    text-align: center;
+  }
+
+  &__weekday {
+    font-size: var(--ngx-font-size-xs);
+    color: var(--ngx-text-faint);
+    font-weight: 600;
+    padding-bottom: 6px;
+  }
+
+  &__day {
+    position: relative;
+    font-size: var(--ngx-font-size-sm);
+    padding: 0;
+    width: 100%;
+    aspect-ratio: 1;
+    border: none;
+    background: transparent;
+    border-radius: var(--ngx-radius-sm);
+    color: var(--ngx-text);
+    cursor: pointer;
+    font-family: var(--ngx-font-family);
+    transition: background var(--ngx-transition), color var(--ngx-transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--ngx-calendar-cell-size);
+
+    &:hover:not(&--disabled):not(&--range-start):not(&--range-end):not(&--selected) {
+      background: var(--ngx-primary-light);
+      color: var(--ngx-primary-hover);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ngx-primary);
+      outline-offset: 1px;
+      z-index: 1;
+    }
+
+    &--other-month {
+      color: var(--ngx-text-faint);
+    }
+
+    &--today {
+      outline: 1.5px solid var(--ngx-primary);
+      outline-offset: -1.5px;
+    }
+
+    &--selected {
+      background: var(--ngx-primary) !important;
+      color: var(--ngx-text-inverse) !important;
+      border-radius: var(--ngx-radius-sm);
+    }
+
+    &--range-start {
+      background: var(--ngx-primary) !important;
+      color: var(--ngx-text-inverse) !important;
+      border-radius: var(--ngx-radius-sm) 0 0 var(--ngx-radius-sm);
+    }
+
+    &--range-end {
+      background: var(--ngx-primary) !important;
+      color: var(--ngx-text-inverse) !important;
+      border-radius: 0 var(--ngx-radius-sm) var(--ngx-radius-sm) 0;
+    }
+
+    &--in-range {
+      background: var(--ngx-primary-highlight);
+      border-radius: 0;
+      color: var(--ngx-primary-hover);
+    }
+
+    &--disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
+}
+
+// ── Time Selector ─────────────────────────────────────────────────────────────
+.ngx-time-selector {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  &__segment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__display {
+    background: var(--ngx-surface);
+    border: 1px solid var(--ngx-border);
+    border-radius: var(--ngx-radius-sm);
+    padding: 7px 8px;
+    font-size: var(--ngx-font-size-base);
+    font-weight: 600;
+    min-width: var(--ngx-time-segment-width);
+    text-align: center;
+    cursor: default;
+    font-family: var(--ngx-font-family, monospace);
+    color: var(--ngx-text);
+    transition: border-color var(--ngx-transition);
+
+    &:focus-visible {
+      outline: 2px solid var(--ngx-primary);
+      border-color: var(--ngx-primary);
+    }
+  }
+
+  &__btn {
+    width: 24px;
+    height: 20px;
+    border: none;
+    background: transparent;
+    border-radius: var(--ngx-radius-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--ngx-text-faint);
+    padding: 0;
+    transition: background var(--ngx-transition), color var(--ngx-transition);
+
+    &:hover {
+      background: var(--ngx-primary-light);
+      color: var(--ngx-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ngx-primary);
+    }
+  }
+
+  &__sep {
+    color: var(--ngx-text-faint);
+    font-weight: 700;
+    font-size: var(--ngx-font-size-md);
+    line-height: 1;
+    padding-top: 4px; // Align with display vertically
+  }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────────
+.ngx-btn {
+  padding: 9px 18px;
+  border-radius: var(--ngx-radius-md);
+  font-size: var(--ngx-font-size-sm);
+  font-weight: 600;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  font-family: var(--ngx-font-family);
+  transition: background var(--ngx-transition), color var(--ngx-transition), border-color var(--ngx-transition);
+  white-space: nowrap;
+
+  &:focus-visible {
+    outline: 2px solid var(--ngx-primary);
+    outline-offset: 2px;
+  }
+
+  &--ghost {
+    background: transparent;
+    color: var(--ngx-text-muted);
+    border-color: var(--ngx-border);
+
+    &:hover {
+      background: var(--ngx-surface-offset);
+      color: var(--ngx-text);
+    }
+  }
+
+  &--primary {
+    background: var(--ngx-primary);
+    color: var(--ngx-text-inverse);
+    border-color: var(--ngx-primary);
+
+    &:hover {
+      background: var(--ngx-primary-hover);
+      border-color: var(--ngx-primary-hover);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// ── Animation ─────────────────────────────────────────────────────────────────
+@keyframes ngx-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+@media (max-width: 767px) {
+  .ngx-panel {
+    &__body {
+      grid-template-columns: 1fr !important;
+    }
+
+    &__calendars {
+      flex-direction: column;
+    }
+
+    &__time-panel {
+      border-left: none;
+      border-top: 1px solid var(--ngx-divider);
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+  }
+
+  .ngx-presets {
+    flex-direction: row;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--ngx-divider);
+    padding: 12px 16px;
+
+    &__btn {
+      white-space: nowrap;
+    }
+  }
+}
+
+@media (max-width: 1023px) {
+  .ngx-panel {
+    &__body {
+      grid-template-columns: 140px 1fr;
+    }
+  }
+}
+

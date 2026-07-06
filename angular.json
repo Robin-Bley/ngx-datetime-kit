@@ -6,5 +6,108 @@
   },
   "newProjectRoot": "projects",
   "projects": {
+    "ngx-datetime-kit": {
+      "projectType": "library",
+      "root": "projects/ngx-datetime-kit",
+      "sourceRoot": "projects/ngx-datetime-kit/src",
+      "prefix": "ngx",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "options": {
+            "tsConfig": "projects/ngx-datetime-kit/tsconfig.lib.json",
+            "project": "projects/ngx-datetime-kit/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ngx-datetime-kit/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/ngx-datetime-kit/tsconfig.spec.json",
+            "polyfills": ["zone.js", "zone.js/testing"]
+          }
+        }
+      }
+    },
+    "demo": {
+      "projectType": "application",
+      "root": "projects/demo",
+      "sourceRoot": "projects/demo/src",
+      "prefix": "demo",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": "dist/demo",
+            "index": "projects/demo/src/index.html",
+            "browser": "projects/demo/src/main.ts",
+            "polyfills": ["zone.js"],
+            "tsConfig": "projects/demo/tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/demo/src/assets",
+                "output": "assets"
+              }
+            ],
+            "styles": [
+              "projects/demo/src/styles.scss",
+              "projects/ngx-datetime-kit/src/lib/styles/index.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "demo:build:production"
+            },
+            "development": {
+              "buildTarget": "demo:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "polyfills": ["zone.js", "zone.js/testing"],
+            "tsConfig": "projects/demo/tsconfig.spec.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/demo/src/assets",
+                "output": "assets"
+              }
+            ],
+            "styles": ["projects/demo/src/styles.scss"],
+            "scripts": []
+          }
+        }
+      }
+    }
   }
 }

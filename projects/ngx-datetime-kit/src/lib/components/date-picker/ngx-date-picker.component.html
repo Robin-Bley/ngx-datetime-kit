@@ -1,0 +1,94 @@
+<div
+  class="ngx-picker-field"
+  [class.ngx-picker-field--open]="isOpen()"
+  [class.ngx-picker-field--disabled]="disabled()"
+  [class.ngx-picker-field--invalid]="invalid()"
+  [attr.aria-haspopup]="'dialog'"
+  [attr.aria-expanded]="isOpen()"
+  [attr.aria-label]="labels.selectDate"
+  (click)="togglePanel()"
+  (keydown.enter)="openPanel()"
+  (keydown.space)="openPanel(); $event.preventDefault()"
+  tabindex="0"
+  role="button"
+>
+  <span class="ngx-picker-field__icon" aria-hidden="true">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="4" width="18" height="18" rx="2"/>
+      <line x1="16" y1="2" x2="16" y2="6"/>
+      <line x1="8" y1="2" x2="8" y2="6"/>
+      <line x1="3" y1="10" x2="21" y2="10"/>
+    </svg>
+  </span>
+
+  <span class="ngx-picker-field__value">
+    @if (displayValue()) {
+      {{ displayValue() }}
+    } @else {
+      <span class="ngx-picker-field__placeholder">{{ placeholderText() }}</span>
+    }
+  </span>
+
+  @if (displayValue() && !disabled()) {
+    <button
+      class="ngx-picker-field__clear"
+      type="button"
+      [attr.aria-label]="labels.clearValue"
+      (click)="clearValue($event)"
+      tabindex="-1"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  }
+</div>
+
+@if (isOpen()) {
+  <div
+    class="ngx-panel ngx-panel--single-calendar"
+    role="dialog"
+    [attr.aria-label]="labels.selectDate"
+    [attr.aria-modal]="true"
+    (keydown.escape)="closePanel()"
+  >
+    <div class="ngx-panel__header">
+      <h2 class="ngx-panel__title">{{ labels.selectDate }}</h2>
+      <button
+        class="ngx-panel__close"
+        type="button"
+        [attr.aria-label]="labels.closePanel"
+        (click)="closePanel()"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="ngx-panel__body ngx-panel__body--single-calendar">
+      <ngx-calendar
+        [viewYear]="viewYear()"
+        [viewMonth]="viewMonth()"
+        [selectedDate]="value()"
+        [minDate]="minDate()"
+        [maxDate]="maxDate()"
+        [showPrevNav]="true"
+        [showNextNav]="true"
+        (daySelected)="onDaySelected($event)"
+        (prevMonthClicked)="navigate(-1)"
+        (nextMonthClicked)="navigate(1)"
+      />
+    </div>
+
+    <div class="ngx-panel__footer">
+      <span></span>
+      <div class="ngx-panel__actions">
+        <button class="ngx-btn ngx-btn--ghost" type="button" (click)="closePanel()">{{ labels.cancel }}</button>
+      </div>
+    </div>
+  </div>
+}
+

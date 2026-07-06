@@ -1,0 +1,49 @@
+<div class="demo-page">
+  <h1 class="demo-page__title">Reactive Forms Integration</h1>
+  <p class="demo-page__subtitle">
+    All pickers implement <code>ControlValueAccessor</code> and work directly
+    with <code>FormControl</code> / <code>FormGroup</code>.
+  </p>
+
+  <section class="demo-section">
+    <h2>Example 1 — DateTimeRange in FormGroup</h2>
+    <form [formGroup]="rangeForm" (ngSubmit)="onRangeSubmit()">
+      <div class="demo-field">
+        <label class="demo-label">Period *</label>
+        <ngx-date-time-range-picker
+          formControlName="range"
+          [invalid]="!!(rangeForm.get('range')?.invalid && rangeForm.get('range')?.touched)"
+        />
+        @if (rangeForm.get('range')?.errors?.['required'] && rangeForm.get('range')?.touched) {
+          <div class="demo-error">This field is required</div>
+        }
+        @if (rangeForm.get('range')?.errors?.['ngxEndBeforeStart']) {
+          <div class="demo-error">End date must be after start date</div>
+        }
+      </div>
+
+      <div class="demo-field">
+        <label class="demo-label">Single date (min: today)</label>
+        <ngx-date-picker
+          formControlName="singleDate"
+          [minDate]="today"
+          [invalid]="!!(rangeForm.get('singleDate')?.invalid && rangeForm.get('singleDate')?.touched)"
+        />
+        @if (rangeForm.get('singleDate')?.errors?.['ngxMinDate']) {
+          <div class="demo-error">Date must not be in the past</div>
+        }
+      </div>
+
+      <div class="demo-actions">
+        <button class="ngx-btn ngx-btn--ghost" type="button" (click)="rangeForm.reset()">Reset</button>
+        <button class="ngx-btn ngx-btn--primary" type="submit" [disabled]="rangeForm.invalid">Submit</button>
+      </div>
+    </form>
+
+    <div class="demo-status">
+      <div><strong>Status:</strong> {{ rangeForm.status }}</div>
+      <div><strong>Value:</strong></div>
+      <pre>{{ rangeForm.value | json }}</pre>
+    </div>
+  </section>
+</div>
