@@ -1,0 +1,45 @@
+<div class="demo-page">
+  <h1 class="demo-page__title">i18n &amp; Date Formats</h1>
+  <p class="demo-page__subtitle">
+    Shows three different date formats (DE, US, ISO) and how labels
+    can be overridden per component.
+  </p>
+
+  <section class="demo-section">
+    <h2>German (dd.MM.yyyy)</h2>
+    <div class="demo-field">
+      <ngx-date-time-range-picker [(value)]="rangeDE" />
+    </div>
+    <code class="demo-code">formats: NGX_DATE_TIME_FORMATS_DE</code>
+  </section>
+
+  <section class="demo-section">
+    <h2>US (MM/dd/yyyy)</h2>
+    <p class="demo-desc">
+      Global providers can be overridden with component-specific providers.
+      Here via <code>providers: [{{ '{' }} provide: NGX_DATE_TIME_FORMATS, useValue: NGX_DATE_TIME_FORMATS_US {{ '}' }}]</code>.
+    </p>
+    <div class="demo-field">
+      <ngx-date-time-range-picker [(value)]="rangeUS" />
+    </div>
+    <code class="demo-code">formats: NGX_DATE_TIME_FORMATS_US</code>
+  </section>
+
+  <section class="demo-section">
+    <h2>ISO 8601 (yyyy-MM-dd)</h2>
+    <div class="demo-field">
+      <ngx-date-time-range-picker [(value)]="rangeISO" />
+    </div>
+    <code class="demo-code">formats: NGX_DATE_TIME_FORMATS_ISO</code>
+  </section>
+
+  <section class="demo-section">
+    <h2>Locale Note</h2>
+    <div class="demo-info">
+      <p>Active locale: <strong>{{ localeId }}</strong></p>
+      <p>For additional locales (e.g. <code>de-DE</code>), import them in <code>main.ts</code>:</p>
+      <pre>import '@angular/common/locales/global/de';</pre>
+      <p>Or via <code>registerLocaleData()</code> in <code>app.config.ts</code>.</p>
+    </div>
+  </section>
+</div>

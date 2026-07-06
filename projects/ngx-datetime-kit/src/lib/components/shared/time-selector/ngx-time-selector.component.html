@@ -1,0 +1,113 @@
+<div class="ngx-time-selector" role="group" [attr.aria-label]="effectiveLabel()">
+  <div class="ngx-time-selector__segment">
+    <button
+      class="ngx-time-selector__btn ngx-time-selector__btn--up"
+      type="button"
+      [attr.aria-label]="labels.increaseValue + ' ' + labels.hours"
+      (click)="changeHours(1)"
+      (keydown.arrowup)="changeHours(1); $event.preventDefault()"
+    >
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="18 15 12 9 6 15"/>
+      </svg>
+    </button>
+    <div
+      class="ngx-time-selector__display"
+      role="spinbutton"
+      [attr.aria-label]="labels.hours"
+      [attr.aria-valuenow]="value().hours"
+      [attr.aria-valuemin]="0"
+      [attr.aria-valuemax]="23"
+      tabindex="0"
+      (keydown.arrowup)="changeHours(1); $event.preventDefault()"
+      (keydown.arrowdown)="changeHours(-1); $event.preventDefault()"
+      (keydown)="onHoursKeydown($event)"
+    >{{ padded(value().hours) }}</div>
+    <button
+      class="ngx-time-selector__btn ngx-time-selector__btn--down"
+      type="button"
+      [attr.aria-label]="labels.decreaseValue + ' ' + labels.hours"
+      (click)="changeHours(-1)"
+    >
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </button>
+  </div>
+
+  <span class="ngx-time-selector__sep" aria-hidden="true">:</span>
+
+  <div class="ngx-time-selector__segment">
+    <button
+      class="ngx-time-selector__btn ngx-time-selector__btn--up"
+      type="button"
+      [attr.aria-label]="labels.increaseValue + ' ' + labels.minutes"
+      (click)="changeMinutes(1)"
+    >
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="18 15 12 9 6 15"/>
+      </svg>
+    </button>
+    <div
+      class="ngx-time-selector__display"
+      role="spinbutton"
+      [attr.aria-label]="labels.minutes"
+      [attr.aria-valuenow]="value().minutes"
+      [attr.aria-valuemin]="0"
+      [attr.aria-valuemax]="59"
+      tabindex="0"
+      (keydown.arrowup)="changeMinutes(1); $event.preventDefault()"
+      (keydown.arrowdown)="changeMinutes(-1); $event.preventDefault()"
+      (keydown)="onMinutesKeydown($event)"
+    >{{ padded(value().minutes) }}</div>
+    <button
+      class="ngx-time-selector__btn ngx-time-selector__btn--down"
+      type="button"
+      [attr.aria-label]="labels.decreaseValue + ' ' + labels.minutes"
+      (click)="changeMinutes(-1)"
+    >
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </button>
+  </div>
+
+  @if (showSeconds()) {
+    <span class="ngx-time-selector__sep" aria-hidden="true">:</span>
+    <div class="ngx-time-selector__segment">
+      <button
+        class="ngx-time-selector__btn ngx-time-selector__btn--up"
+        type="button"
+        [attr.aria-label]="labels.increaseValue + ' ' + labels.seconds"
+        (click)="changeSeconds(1)"
+      >
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="18 15 12 9 6 15"/>
+        </svg>
+      </button>
+      <div
+        class="ngx-time-selector__display"
+        role="spinbutton"
+        [attr.aria-label]="labels.seconds"
+        [attr.aria-valuenow]="value().seconds"
+        [attr.aria-valuemin]="0"
+        [attr.aria-valuemax]="59"
+        tabindex="0"
+        (keydown.arrowup)="changeSeconds(1); $event.preventDefault()"
+        (keydown.arrowdown)="changeSeconds(-1); $event.preventDefault()"
+        (keydown)="onSecondsKeydown($event)"
+      >{{ padded(value().seconds) }}</div>
+      <button
+        class="ngx-time-selector__btn ngx-time-selector__btn--down"
+        type="button"
+        [attr.aria-label]="labels.decreaseValue + ' ' + labels.seconds"
+        (click)="changeSeconds(-1)"
+      >
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+    </div>
+  }
+</div>
+

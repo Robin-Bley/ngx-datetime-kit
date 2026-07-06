@@ -1,0 +1,77 @@
+<div class="ngx-calendar" role="grid" [attr.aria-label]="monthYearLabel()">
+  <div class="ngx-calendar__header">
+    @if (showPrevNav()) {
+      <button
+        class="ngx-calendar__nav-btn"
+        type="button"
+        (click)="onPrevMonth()"
+        [attr.aria-label]="labels.previousMonth">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+    } @else {
+      <span class="ngx-calendar__nav-spacer"></span>
+    }
+
+    <span class="ngx-calendar__month-title">{{ monthYearLabel() }}</span>
+
+    @if (showNextNav()) {
+      <button
+        class="ngx-calendar__nav-btn"
+        type="button"
+        (click)="onNextMonth()"
+        [attr.aria-label]="labels.nextMonth"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+    } @else {
+      <span class="ngx-calendar__nav-spacer"></span>
+    }
+  </div>
+
+  <div class="ngx-calendar__grid" role="row">
+    @for (weekday of weekdayNames(); track weekday) {
+      <div
+        class="ngx-calendar__weekday"
+        role="columnheader"
+        [attr.aria-label]="weekday"
+      >{{ weekday }}</div>
+    }
+  </div>
+
+  <div class="ngx-calendar__grid">
+    @for (cell of cells(); track cell.date) {
+      @if (cell.isCurrentMonth) {
+        <button
+          class="ngx-calendar__day"
+          [class.ngx-calendar__day--today]="isToday(cell.date)"
+          [class.ngx-calendar__day--selected]="isSelected(cell.date)"
+          [class.ngx-calendar__day--range-single]="isRangeStart(cell.date) && isRangeEnd(cell.date)"
+          [class.ngx-calendar__day--range-start]="isRangeStart(cell.date) && !isRangeEnd(cell.date)"
+          [class.ngx-calendar__day--range-end]="isRangeEnd(cell.date) && !isRangeStart(cell.date)"
+          [class.ngx-calendar__day--in-range]="isInRange(cell.date)"
+          [class.ngx-calendar__day--disabled]="isDisabled(cell.date)"
+          [attr.aria-pressed]="isSelected(cell.date)"
+          [attr.aria-disabled]="isDisabled(cell.date)"
+          [attr.aria-label]="dayAriaLabel(cell.date)"
+          [disabled]="isDisabled(cell.date)"
+          role="gridcell"
+          type="button"
+          (click)="onDayClick(cell.date)"
+          (keydown.enter)="onDayClick(cell.date)"
+          (keydown.space)="onDayClick(cell.date); $event.preventDefault()"
+          (mouseenter)="onDayHover.emit(cell.date)"
+        >
+          <span aria-hidden="true">{{ cell.dayNumber }}</span>
+        </button>
+      } @else {
+        <!-- Empty placeholder keeps the 7-column grid intact. -->
+        <div class="ngx-calendar__day ngx-calendar__day--placeholder" aria-hidden="true"></div>
+      }
+    }
+  </div>
+</div>
+

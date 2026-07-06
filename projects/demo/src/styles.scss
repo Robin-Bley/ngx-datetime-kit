@@ -1,0 +1,18 @@
+/* Global demo app styles — ngx-datetime-kit library styles are loaded via angular.json */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--ngx-bg);
+  color: var(--ngx-text);
+  font-family: var(--ngx-font-family);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--ngx-primary); }
+a:hover { color: var(--ngx-primary-hover); }

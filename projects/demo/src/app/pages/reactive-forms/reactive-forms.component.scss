@@ -1,0 +1,13 @@
+.demo-page { max-width: 720px; }
+.demo-page__title { font-size: 28px; font-weight: 700; margin: 0 0 12px; }
+.demo-page__subtitle { font-size: 14px; color: var(--ngx-text-muted); margin: 0 0 40px; line-height: 1.6; }
+.demo-section { margin-bottom: 48px; }
+.demo-section h2 { font-size: 18px; font-weight: 600; margin: 0 0 20px; }
+.demo-field { max-width: 480px; position: relative; margin-bottom: 24px; }
+.demo-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--ngx-text); }
+.demo-error { margin-top: 6px; font-size: 12px; color: var(--ngx-error); }
+.demo-actions { display: flex; gap: 10px; margin-top: 8px; }
+.demo-status { margin-top: 24px; background: var(--ngx-surface); border: 1px solid var(--ngx-divider); border-radius: 8px; padding: 16px; font-size: 13px; }
+pre { font-size: 12px; color: var(--ngx-text-muted); white-space: pre-wrap; }
+code { background: var(--ngx-surface-offset); padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+

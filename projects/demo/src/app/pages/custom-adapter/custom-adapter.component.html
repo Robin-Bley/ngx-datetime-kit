@@ -1,0 +1,44 @@
+<div class="demo-page">
+  <h1 class="demo-page__title">Custom DateTimeAdapter</h1>
+  <p class="demo-page__subtitle">
+    Demonstrates how to implement a custom adapter and register it via DI.
+    This <code>LoggingDateTimeAdapter</code> delegates all calls to the native
+    adapter and logs parse/format operations to the browser console.
+  </p>
+
+  <section class="demo-section">
+    <h2>Picker with LoggingDateTimeAdapter</h2>
+    <p class="demo-desc">Open the browser console and observe the log output.</p>
+    <div class="demo-field">
+      <ngx-date-time-range-picker [(value)]="range" />
+    </div>
+    @if (range()) {
+      <div class="demo-value">
+        <strong>Value:</strong> {{ range() | json }}
+      </div>
+    }
+  </section>
+
+  <section class="demo-section">
+    <h2>Implementing your own adapter</h2>
+    <div class="demo-code-block">
+      <pre><code>@Injectable()
+class MyLuxonDateTimeAdapter extends NgxDateTimeAdapter&lt;DateTime&gt; {{ '{' }}
+  // ... Luxon-based implementation ...
+{{ '}' }}
+
+// Global registration:
+bootstrapApplication(AppComponent, {{ '{' }}
+  providers: [
+    provideNgxDatetimeKit({{ '{' }}
+      adapter: MyLuxonDateTimeAdapter
+    {{ '}' }})
+  ]
+{{ '}' }});</code></pre>
+      <p>
+        Full documentation at
+        <a href="https://github.com/Robin-Bley/ngx-datetime-kit/blob/main/docs/adapter.md" target="_blank" rel="noopener">docs/adapter.md</a>.
+      </p>
+    </div>
+  </section>
+</div>

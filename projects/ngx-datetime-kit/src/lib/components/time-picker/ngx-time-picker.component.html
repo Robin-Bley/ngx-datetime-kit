@@ -1,0 +1,82 @@
+<div
+  class="ngx-picker-field"
+  [class.ngx-picker-field--open]="isOpen()"
+  [class.ngx-picker-field--disabled]="disabled()"
+  [class.ngx-picker-field--invalid]="invalid()"
+  [attr.aria-haspopup]="'dialog'"
+  [attr.aria-expanded]="isOpen()"
+  [attr.aria-label]="labels.selectTime"
+  (click)="togglePanel()"
+  (keydown.enter)="openPanel()"
+  (keydown.space)="openPanel(); $event.preventDefault()"
+  tabindex="0"
+  role="button"
+>
+  <span class="ngx-picker-field__icon" aria-hidden="true">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/>
+      <polyline points="12 6 12 12 16 14"/>
+    </svg>
+  </span>
+
+  <span class="ngx-picker-field__value">
+    @if (displayValue()) {
+      {{ displayValue() }}
+    } @else {
+      <span class="ngx-picker-field__placeholder">{{ placeholderText() }}</span>
+    }
+  </span>
+
+  @if (displayValue() && !disabled()) {
+    <button
+      class="ngx-picker-field__clear"
+      type="button"
+      [attr.aria-label]="labels.clearValue"
+      (click)="clearValue($event)"
+      tabindex="-1"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  }
+</div>
+
+@if (isOpen()) {
+  <div
+    class="ngx-panel ngx-panel--time-only"
+    role="dialog"
+    [attr.aria-label]="labels.selectTime"
+    [attr.aria-modal]="true"
+    (keydown.escape)="cancelPanel()"
+  >
+    <div class="ngx-panel__header">
+      <h2 class="ngx-panel__title">{{ labels.selectTime }}</h2>
+      <button class="ngx-panel__close" type="button" [attr.aria-label]="labels.closePanel" (click)="cancelPanel()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="ngx-panel__body ngx-panel__body--time-only">
+      <ngx-time-selector
+        [value]="pendingTime()"
+        [showSeconds]="showSeconds()"
+        [label]="labels.selectTime"
+        (timeChanged)="pendingTime.set($event)"
+      />
+    </div>
+
+    <div class="ngx-panel__footer">
+      <span></span>
+      <div class="ngx-panel__actions">
+        <button class="ngx-btn ngx-btn--ghost" type="button" (click)="cancelPanel()">{{ labels.cancel }}</button>
+        <button class="ngx-btn ngx-btn--primary" type="button" (click)="applyPanel()">{{ labels.apply }}</button>
+      </div>
+    </div>
+  </div>
+}
+
