@@ -2,6 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
+  ElementRef,
   forwardRef,
   inject,
   input,
@@ -17,6 +19,7 @@ import { DateTimeRange } from '../../models/date-range.model';
 import { TimeValue, createTimeValue } from '../../models/time-value.model';
 import { RangePreset } from '../../models/preset.model';
 import { NgxCalendarComponent } from '../shared/calendar/ngx-calendar.component';
+import { NgxPickerPanelCoordinatorService } from '../shared/picker-panel/ngx-picker-panel-coordinator.service';
 import { NgxTimeSelectorComponent } from '../shared/time-selector/ngx-time-selector.component';
 import { NgxPresetsPanelComponent } from '../shared/presets-panel/ngx-presets-panel.component';
 import { formatDuration } from '../../utilities/date-utils';
@@ -46,8 +49,11 @@ import { formatDuration } from '../../utilities/date-utils';
 })
 export class NgxDateTimeRangePickerComponent<D> implements ControlValueAccessor {
   private readonly adapter: NgxDateTimeAdapter<D> = inject<NgxDateTimeAdapter<D>>(NGX_DATE_TIME_ADAPTER as never);
+  private readonly elementRef: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly formats = inject(NGX_DATE_TIME_FORMATS);
   protected readonly labels = inject(NGX_LABELS);
+  private readonly panelCoordinator: NgxPickerPanelCoordinatorService = inject(NgxPickerPanelCoordinatorService);
   private readonly today = this.adapter.today();
 
   /** Two-way bindable value — works directly with Signal Forms `model()`. */
@@ -187,6 +193,12 @@ export class NgxDateTimeRangePickerComponent<D> implements ControlValueAccessor 
   private onChange: (value: DateTimeRange<D> | null) => void = () => {};
   private onTouched: () => void = () => {};
 
+  constructor() {
+    this.destroyRef.onDestroy((): void => {
+      this.panelCoordinator.unregister(this);
+    });
+  }
+
   writeValue(value: DateTimeRange<D> | null): void {
     this.value.set(value);
   }
@@ -203,16 +215,24 @@ export class NgxDateTimeRangePickerComponent<D> implements ControlValueAccessor 
 
   protected togglePanel(): void {
     if (this.disabled()) {
+
       return;
     }
-    this.isOpen() ? this.cancelPanel() : this.openPanel();
+
+    if (this.isOpen()) {
+      this.cancelPanel();
+
+      return;
+    }
+
+    this.openPanel();
   }
 
   protected openPanel(): void {
     if (this.disabled() || this.isOpen()) {
+
       return;
     }
-
 
     const currentValue: DateTimeRange<D> | null = this.value();
     if (currentValue?.start !== null && currentValue?.start !== undefined) {
@@ -247,17 +267,24 @@ export class NgxDateTimeRangePickerComponent<D> implements ControlValueAccessor 
     this.leftMonth.set(this.adapter.getMonth(referenceDate));
     this.leftYear.set(this.adapter.getYear(referenceDate));
     this.isOpen.set(true);
+    this.panelCoordinator.requestOpen(
+      this,
+      this.elementRef.nativeElement,
+      (): void => {
+        this.closePanelInternal(true);
+      },
+    );
   }
 
   protected cancelPanel(): void {
-    this.isOpen.set(false);
-    this.onTouched();
+    this.closePanelInternal(true);
   }
 
   protected applyPanel(): void {
     const startDate: D | null = this.pendingStart();
     const endDate: D | null = this.pendingEnd();
     if (startDate === null || endDate === null) {
+
       return;
     }
 
@@ -271,7 +298,7 @@ export class NgxDateTimeRangePickerComponent<D> implements ControlValueAccessor 
     this.onChange(nextValue);
     this.onTouched();
     this.activePresetKey.set('custom');
-    this.isOpen.set(false);
+    this.closePanelInternal(false);
   }
 
   protected clearValue(event: MouseEvent): void {
@@ -359,6 +386,15 @@ export class NgxDateTimeRangePickerComponent<D> implements ControlValueAccessor 
 
   protected navigateRight(delta: number): void {
     this.navigateLeft(delta);
+  }
+
+  private closePanelInternal(markAsTouched: boolean): void {
+    this.isOpen.set(false);
+    this.panelCoordinator.notifyClosed(this);
+
+    if (markAsTouched) {
+      this.onTouched();
+    }
   }
 }
 

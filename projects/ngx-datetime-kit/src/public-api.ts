@@ -75,6 +75,9 @@ export {
 } from './lib/forms/signal-forms-adapter';
 export type { NgxSignalField } from './lib/forms/signal-forms-adapter';
 
+// ── Angular Material integration (optional — requires @angular/material) ─────
+export { NgxMatFormFieldDirective } from './lib/material/ngx-mat-form-field.directive';
+
 // ── Utilities ─────────────────────────────────────────────────────────────────
 export { formatDuration, buildCalendarGrid, clampDate } from './lib/utilities/date-utils';
 

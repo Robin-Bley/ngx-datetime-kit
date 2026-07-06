@@ -1,0 +1,114 @@
+// Reuse the shared demo page styles (defined in overview.component.scss)
+.demo-page { max-width: 900px; }
+.demo-hero { margin-bottom: 40px; }
+.demo-hero__title { font-size: 32px; font-weight: 700; margin: 0 0 12px; color: var(--ngx-primary); }
+.demo-hero__subtitle {
+  font-size: 16px;
+  color: var(--ngx-text-muted);
+  margin: 0;
+  line-height: 1.6;
+  max-width: 640px;
+
+  code {
+    font-size: 14px;
+    background: var(--ngx-surface-offset);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--ngx-text);
+  }
+}
+
+.demo-section {
+  margin: 40px 0;
+
+  p code {
+    font-size: 13px;
+    background: var(--ngx-surface-offset);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--ngx-text);
+  }
+}
+
+.demo-section__title { font-size: 18px; font-weight: 600; margin: 0 0 8px; }
+.demo-section__desc  { font-size: 14px; color: var(--ngx-text-muted); margin: 0 0 20px; }
+
+mat-divider { margin: 4px 0; }
+
+// ── Form layout ───────────────────────────────────────────────────────────────
+
+.demo-mat-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.demo-mat-field {
+  width: 100%;
+  max-width: 400px;
+
+  &--wide {
+    max-width: 680px;
+  }
+}
+
+.demo-mat-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.demo-value {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--ngx-text-muted);
+  background: var(--ngx-surface);
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--ngx-divider);
+  word-break: break-all;
+}
+
+// ── Setup guide ───────────────────────────────────────────────────────────────
+
+.demo-steps {
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 0;
+
+  li {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ngx-text);
+
+    strong { color: var(--ngx-text); }
+  }
+}
+
+.demo-code-inline {
+  font-size: 13px;
+  background: var(--ngx-surface-offset);
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: var(--ngx-primary-hover);
+}
+
+.demo-code-block {
+  margin: 8px 0 0;
+  padding: 14px 16px;
+  background: var(--ngx-surface);
+  border: 1px solid var(--ngx-divider);
+  border-radius: var(--ngx-radius-md);
+  overflow-x: auto;
+
+  code {
+    font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ngx-text);
+    white-space: pre;
+  }
+}
+

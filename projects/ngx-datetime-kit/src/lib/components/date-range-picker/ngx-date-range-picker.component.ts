@@ -2,6 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
+  ElementRef,
   forwardRef,
   inject,
   input,
@@ -16,6 +18,7 @@ import { NGX_LABELS } from '../../tokens/labels.token';
 import { DateRange } from '../../models/date-range.model';
 import { RangePreset } from '../../models/preset.model';
 import { NgxCalendarComponent } from '../shared/calendar/ngx-calendar.component';
+import { NgxPickerPanelCoordinatorService } from '../shared/picker-panel/ngx-picker-panel-coordinator.service';
 import { NgxPresetsPanelComponent } from '../shared/presets-panel/ngx-presets-panel.component';
 
 /**
@@ -36,8 +39,11 @@ import { NgxPresetsPanelComponent } from '../shared/presets-panel/ngx-presets-pa
 })
 export class NgxDateRangePickerComponent<D> implements ControlValueAccessor {
   private readonly adapter: NgxDateTimeAdapter<D> = inject<NgxDateTimeAdapter<D>>(NGX_DATE_TIME_ADAPTER as never);
+  private readonly elementRef: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly formats = inject(NGX_DATE_TIME_FORMATS);
   protected readonly labels = inject(NGX_LABELS);
+  private readonly panelCoordinator: NgxPickerPanelCoordinatorService = inject(NgxPickerPanelCoordinatorService);
   private readonly today = this.adapter.today();
 
   public readonly value = model<DateRange<D> | null>(null);
@@ -145,6 +151,12 @@ export class NgxDateRangePickerComponent<D> implements ControlValueAccessor {
   private onChange: (value: DateRange<D> | null) => void = () => {};
   private onTouched: () => void = () => {};
 
+  constructor() {
+    this.destroyRef.onDestroy((): void => {
+      this.panelCoordinator.unregister(this);
+    });
+  }
+
   writeValue(value: DateRange<D> | null): void {
     this.value.set(value);
   }
@@ -161,15 +173,25 @@ export class NgxDateRangePickerComponent<D> implements ControlValueAccessor {
 
   protected togglePanel(): void {
     if (this.disabled()) {
+
       return;
     }
-    this.isOpen() ? this.cancelPanel() : this.openPanel();
+
+    if (this.isOpen()) {
+      this.cancelPanel();
+
+      return;
+    }
+
+    this.openPanel();
   }
 
   protected openPanel(): void {
-    if (this.disabled()) {
+    if (this.disabled() || this.isOpen()) {
+
       return;
     }
+
     const currentValue: DateRange<D> | null = this.value();
     this.pendingStart.set(currentValue?.start ?? null);
     this.pendingEnd.set(currentValue?.end ?? null);
@@ -177,24 +199,32 @@ export class NgxDateRangePickerComponent<D> implements ControlValueAccessor {
     this.leftMonth.set(this.adapter.getMonth(referenceDate));
     this.leftYear.set(this.adapter.getYear(referenceDate));
     this.isOpen.set(true);
+    this.panelCoordinator.requestOpen(
+      this,
+      this.elementRef.nativeElement,
+      (): void => {
+        this.closePanelInternal(true);
+      },
+    );
   }
 
   protected cancelPanel(): void {
-    this.isOpen.set(false);
-    this.onTouched();
+    this.closePanelInternal(true);
   }
 
   protected applyPanel(): void {
     const start: D | null = this.pendingStart();
     const end: D | null = this.pendingEnd();
     if (start === null || end === null) {
+
       return;
     }
+
     const nextValue: DateRange<D> = { start, end };
     this.value.set(nextValue);
     this.onChange(nextValue);
     this.onTouched();
-    this.isOpen.set(false);
+    this.closePanelInternal(false);
   }
 
   protected onDaySelected(date: D): void {
@@ -258,5 +288,14 @@ export class NgxDateRangePickerComponent<D> implements ControlValueAccessor {
 
   protected navigateRight(delta: number): void {
     this.navigateLeft(delta);
+  }
+
+  private closePanelInternal(markAsTouched: boolean): void {
+    this.isOpen.set(false);
+    this.panelCoordinator.notifyClosed(this);
+
+    if (markAsTouched) {
+      this.onTouched();
+    }
   }
 }

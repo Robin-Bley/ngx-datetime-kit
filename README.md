@@ -7,18 +7,14 @@
 
 Production-ready Angular 22+ library for **Date**, **Time**, **DateTime**, **Date Range**, and **DateTime Range** pickers — with full accessibility, i18n, Reactive Forms **and** Signal Forms support.
 
+> 🚀 This library is still new. Feedback is very welcome and improvements will be implemented as quickly as possible. Pull requests are also highly appreciated and will be reviewed promptly.
+
 > 📸 **Screenshot placeholder**
-> ![DateTime Range Picker](docs/assets/screenshot-datetime-range-picker.png)
-> <!-- TODO: Replace with actual screenshot after first run -->
+> ![DateTime Range Picker](docs/assets/preview.png)
 
 ## Live Demo
 
 > 🔗 **[StackBlitz Live Demo](https://stackblitz.com/github/Robin-Bley/ngx-datetime-kit?file=README.md)**
-> <!-- TODO: Create actual StackBlitz project and replace URL -->
-
-## npm Package
-
-> 📦 **[https://www.npmjs.com/package/ngx-datetime-kit](https://www.npmjs.com/package/ngx-datetime-kit)**
 
 ## Features
 
@@ -33,6 +29,7 @@ Production-ready Angular 22+ library for **Date**, **Time**, **DateTime**, **Dat
 - ✅ **Configurable date formats** (DE, US, ISO and custom)
 - ✅ **Reactive Forms** — `ControlValueAccessor`, custom validators
 - ✅ **Signal Forms** — `model()` two-way binding, `NgxSignalField`, signal validators
+- ✅ **Angular Material** — full `mat-form-field` compatibility via `NgxMatFormFieldDirective`
 - ✅ **Angular Package Format** (APF) — tree-shakeable, no side effects
 - ✅ **Min/Max, disabled, required, custom validators**
 - ✅ **Range presets** (Today, Last 7 days, This month, Custom, …)
@@ -95,6 +92,61 @@ rangeField = createDateTimeRangeSignalField(this.adapter);
 
 See [docs/forms.md](docs/forms.md) for full examples and comparison.
 
+## Angular Material Integration
+
+All five picker components are fully compatible with Angular Material's
+`<mat-form-field>` — including floating labels, `<mat-error>`, `<mat-hint>`,
+required markers, disabled state, and error-state highlighting.
+
+### Setup
+
+```bash
+npm install @angular/material
+```
+
+Import `NgxMatFormFieldDirective` alongside your pickers and Angular Material's
+form-field module. The directive activates **automatically** — its selector
+matches all five picker element names, so no extra attribute is needed.
+
+```typescript
+import { NgxDatePickerComponent, NgxMatFormFieldDirective } from 'ngx-datetime-kit';
+import { MatFormFieldModule } from '@angular/material/form-field';
+
+@Component({
+  imports: [
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    NgxDatePickerComponent,
+    NgxMatFormFieldDirective, // ← activates automatically on ngx-date-picker
+  ],
+})
+```
+
+### Usage
+
+```html
+<!-- Date picker -->
+<mat-form-field appearance="outline">
+  <mat-label>Booking date</mat-label>
+  <ngx-date-picker [formControl]="dateCtrl"></ngx-date-picker>
+  <mat-error>Please select a date.</mat-error>
+</mat-form-field>
+
+<!-- Date-range picker with validator -->
+<mat-form-field appearance="outline">
+  <mat-label>Date range</mat-label>
+  <ngx-date-range-picker [formControl]="rangeCtrl"></ngx-date-range-picker>
+  <mat-error>Start must be before end.</mat-error>
+</mat-form-field>
+```
+
+All five pickers work identically inside `mat-form-field`:
+`ngx-date-picker`, `ngx-time-picker`, `ngx-date-time-picker`,
+`ngx-date-range-picker`, `ngx-date-time-range-picker`.
+
+> **Note** `@angular/material` is an *optional* peer dependency.
+> You only need it if you use `NgxMatFormFieldDirective`.
+
 ## Custom Adapter
 
 ```typescript
@@ -106,12 +158,6 @@ provideNgxDatetimeKit({ adapter: LuxonDateTimeAdapter })
 
 See [docs/adapter.md](docs/adapter.md).
 
-## GitHub Secrets Required
-
-| Secret | Description |
-|--------|-------------|
-| `NPM_TOKEN` | npm automation token for publishing |
-
 ## Documentation
 
 - [Getting Started](docs/getting-started.md) | [Architecture](docs/architecture.md)
@@ -121,10 +167,10 @@ See [docs/adapter.md](docs/adapter.md).
 
 ## Contributing
 
+Because the library is still new, issues, ideas, feedback, and pull requests are especially welcome.
+
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
 MIT — see [LICENSE](LICENSE).
-
-**Author:** [Robin Bley](https://github.com/Robin-Bley) · **Repo:** [github.com/Robin-Bley/ngx-datetime-kit](https://github.com/Robin-Bley/ngx-datetime-kit)

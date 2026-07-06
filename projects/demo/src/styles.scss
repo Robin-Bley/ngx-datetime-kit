@@ -1,4 +1,23 @@
 /* Global demo app styles — ngx-datetime-kit library styles are loaded via angular.json */
+@use '@angular/material' as mat;
+
+// Angular Material theme using teal to complement the library's colour palette
+$demo-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$cyan-palette,
+  )
+));
+
+html {
+  @include mat.core-theme($demo-theme);
+  @include mat.form-field-theme($demo-theme);
+  @include mat.input-theme($demo-theme);
+  @include mat.button-theme($demo-theme);
+  @include mat.select-theme($demo-theme);
+}
+
+
 
 *, *::before, *::after {
   box-sizing: border-box;

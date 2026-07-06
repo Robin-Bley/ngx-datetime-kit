@@ -64,7 +64,7 @@
   // ── Panel dialog sizes per picker type (desktop ≥ 1280 px) ──────────────────
   // max-width — override to resize each picker dialog
   --ngx-panel-w-default:  1000px;   // DateTimeRangePicker  (presets + 2 cal + time)
-  --ngx-panel-w-range:    700px;   // DateRangePicker      (presets + 2 cal)
+  --ngx-panel-w-range:    750px;   // DateRangePicker      (presets + 2 cal)
   --ngx-panel-w-datetime: 340px;   // DateTimePicker       (cal + time stacked)
   --ngx-panel-w-date:     340px;   // DatePicker           (single calendar)
   --ngx-panel-w-time:     240px;   // TimePicker           (time selector only)
@@ -88,6 +88,14 @@
   --ngx-bottom-handle-width: 40px;
   --ngx-bottom-handle-height: 4px;
   --ngx-bottom-handle-color: var(--ngx-border);
+
+  // Z-index stacking order (Material form-field integration)
+  // Used to ensure picker panel appears above Material form-field chrome and hints
+  --ngx-z-form-field-open: 1001;      // Active form field container
+  --ngx-z-control: 1002;              // ngx-mat-control wrapper
+  --ngx-z-panel: 1100;                // Base panel level
+  --ngx-z-panel-material: 1200;       // Panel in Material context (above MDC elements)
+  --ngx-z-hint-hidden: -1;            // Push hints behind panel
 }
 
 // ── Tablet overrides for panel dialog sizes (768 px – 1279 px) ───────────────

@@ -5,7 +5,7 @@
 This is an Angular 22+ library (`ngx-datetime-kit`) providing Date/Time/Range picker components.
 - **Author**: Robin Bley (https://github.com/Robin-Bley)
 - **npm**: https://www.npmjs.com/package/ngx-datetime-kit
-- **Selector prefix**: `ngx`
+- **Selector prefix**: `ngx-datetime-kit`
 
 ## Architecture Rules
 
@@ -26,6 +26,11 @@ This is an Angular 22+ library (`ngx-datetime-kit`) providing Date/Time/Range pi
 - `computed()` for derived state — avoid manual subscriptions/effects where possible
 - TypeScript strict mode — no `any` unless absolutely unavoidable
 - All component templates must have ARIA attributes on interactive elements
+- No inline `if` statements
+- Always use braces for `if`, `else`, `for`, `while`, and similar control-flow statements
+- Insert exactly one blank line before every `return` statement
+- Insert exactly one blank line between an `if`/`for`/`while`/`switch` block and the next statement
+- Never allow two consecutive blank lines, including at the end of a file
 
 ## Component File Structure
 
@@ -225,4 +230,3 @@ styles/
 - **Timezone support**: Add `getTimezone()`, `convertToTimezone()` methods to `NgxDateTimeAdapter` in a new minor version. All components receive a `timezone` input that delegates to the adapter.
 - **Additional adapters**: Luxon and date-fns adapters should live in separate npm packages (e.g. `ngx-datetime-kit-luxon`) to avoid bundle bloat.
 - **Year/decade views**: Add `viewMode: 'month' | 'year' | 'decade'` to the calendar component for faster navigation.
-

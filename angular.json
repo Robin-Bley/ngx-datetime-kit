@@ -103,7 +103,10 @@
                 "output": "assets"
               }
             ],
-            "styles": ["projects/demo/src/styles.scss"],
+            "styles": [
+              "projects/demo/src/styles.scss",
+              "projects/ngx-datetime-kit/src/lib/styles/index.scss"
+            ],
             "scripts": []
           }
         }

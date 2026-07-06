@@ -28,4 +28,42 @@ describe('NgxDatePickerComponent', () => {
     const panel: HTMLDivElement | null = fixture.nativeElement.querySelector('.ngx-panel');
     expect(panel).not.toBeNull();
   });
+
+  it('closes the panel when clicking outside the picker', () => {
+    const trigger: HTMLDivElement = fixture.nativeElement.querySelector('.ngx-picker-field');
+    trigger.click();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.ngx-panel')).not.toBeNull();
+
+    document.body.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.ngx-panel')).toBeNull();
+  });
+
+  it('keeps only one picker panel open at a time', () => {
+    const secondFixture: ComponentFixture<NgxDatePickerComponent<Date>> = TestBed.createComponent(
+      NgxDatePickerComponent as Type<NgxDatePickerComponent<Date>>,
+    );
+    secondFixture.detectChanges();
+
+    const firstTrigger: HTMLDivElement = fixture.nativeElement.querySelector('.ngx-picker-field');
+    const secondTrigger: HTMLDivElement = secondFixture.nativeElement.querySelector('.ngx-picker-field');
+
+    firstTrigger.click();
+    fixture.detectChanges();
+    secondFixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.ngx-panel')).not.toBeNull();
+
+    secondTrigger.click();
+    fixture.detectChanges();
+    secondFixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.ngx-panel')).toBeNull();
+    expect(secondFixture.nativeElement.querySelector('.ngx-panel')).not.toBeNull();
+
+    secondFixture.destroy();
+  });
 });

@@ -50,9 +50,9 @@
 
   &__icon {
     flex: none;
-    color: var(--ngx-primary);
     display: flex;
     align-items: center;
+    color: var(--ngx-primary);
   }
 
   &__value {
@@ -73,12 +73,12 @@
     justify-content: center;
     width: 24px;
     height: 24px;
+    padding: 0;
     border: none;
-    background: transparent;
     border-radius: var(--ngx-radius-full);
+    background: transparent;
     color: var(--ngx-text-faint);
     cursor: pointer;
-    padding: 0;
     transition: color var(--ngx-transition), background var(--ngx-transition);
 
     &:hover {
@@ -88,15 +88,24 @@
   }
 }
 
-// ── Panel container ───────────────────────────────────────────────────────────
+// ── Picker host (panel anchor) ────────────────────────────────────────────────
+ngx-date-time-range-picker,
+ngx-date-range-picker,
+ngx-date-time-picker,
+ngx-date-picker,
+ngx-time-picker {
+  position: relative;
+  display: block;
+}
+
+// ── Panel ─────────────────────────────────────────────────────────────────────
 .ngx-panel {
   position: absolute;
-  z-index: 1000;
+  z-index: var(--ngx-z-panel);
   top: calc(100% + 8px);
   left: 0;
   width: max-content;
-  // Default size (DateTimeRangePicker)
-  max-width: var(--ngx-panel-w-default);
+  max-width: var(--ngx-panel-w-default);   // Default: DateTimeRangePicker
   min-width: var(--ngx-panel-minw-default);
   background: var(--ngx-surface);
   border: 1px solid var(--ngx-border);
@@ -106,87 +115,39 @@
   font-family: var(--ngx-font-family);
   animation: ngx-panel-in 150ms ease;
 
-  // ── Per-type sizing via :has() ─────────────────────────────────────────────
-  // DateRangePicker: presets + 2 calendars (no time panel)
+  // ── Per-type sizing & overrides via :has() ─────────────────────────────────
+
   &:has(.ngx-panel__body--no-time) {
     max-width: var(--ngx-panel-w-range);
     min-width: var(--ngx-panel-minw-range);
   }
 
-  // DateTimePicker: single calendar + time stacked
   &:has(.ngx-panel__body--date-time) {
     max-width: var(--ngx-panel-w-datetime);
     min-width: var(--ngx-panel-minw-datetime);
 
-    // ── Compact time panel: no background, less padding ─────────────────────
+    // Compact time panel: transparent, centered, no border
     .ngx-panel__time-panel {
       flex: 0 0 auto;
-      padding: 12px 0 0 0;
+      padding: 12px 0 0;
+      border: 0;
       background: transparent;
       justify-content: center;
       align-items: center;
-      border: 0;
-    }
-
-    // ── Footer layout: stack preview above buttons ─────────────────────────
-    .ngx-panel__footer {
-      flex-direction: column;
-      align-items: stretch;
-      justify-content: flex-start;
-    }
-
-    .ngx-panel__footer-preview {
-      margin-bottom: 12px;
-      text-align: center;
-    }
-
-    .ngx-panel__actions {
-      width: 100%;
-      justify-content: flex-end;
     }
   }
 
-  // DateRangePicker: presets + calendars (no time)
-  &:has(.ngx-panel__body--no-time) {
-    // ── Footer layout: stack preview above buttons ─────────────────────────
-    .ngx-panel__footer {
-      flex-direction: column;
-      align-items: stretch;
-      justify-content: flex-start;
-    }
-
-    .ngx-panel__footer-preview {
-      margin-bottom: 12px;
-      text-align: center;
-    }
-
-    .ngx-panel__actions {
-      width: 100%;
-      justify-content: flex-end;
-    }
-  }
-
-  // DatePicker: single calendar only
   &:has(.ngx-panel__body--single-calendar) {
     max-width: var(--ngx-panel-w-date);
     min-width: var(--ngx-panel-minw-date);
   }
 
-  // TimePicker: time selector only — compact
   &:has(.ngx-panel__body--time-only) {
     max-width: var(--ngx-panel-w-time);
     min-width: var(--ngx-panel-minw-time);
   }
 
-  // Wrapper must be position: relative for absolute positioning to work
-  ngx-date-time-range-picker,
-  ngx-date-range-picker,
-  ngx-date-time-picker,
-  ngx-date-picker,
-  ngx-time-picker {
-    position: relative;
-    display: block;
-  }
+  // ── Header ─────────────────────────────────────────────────────────────────
 
   &__header {
     display: flex;
@@ -197,27 +158,27 @@
   }
 
   &__title {
+    margin: 0;
     font-size: var(--ngx-font-size-lg);
     font-weight: 600;
-    margin: 0;
     color: var(--ngx-text);
   }
 
   &__preview {
+    margin: 4px 0 0;
     font-size: var(--ngx-font-size-sm);
     color: var(--ngx-text-muted);
-    margin: 4px 0 0;
   }
 
   &__close {
     flex: none;
-    width: 32px;
-    height: 32px;
-    border-radius: var(--ngx-radius-full);
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 32px;
+    height: 32px;
     border: none;
+    border-radius: var(--ngx-radius-full);
     background: var(--ngx-surface-offset);
     color: var(--ngx-text-muted);
     cursor: pointer;
@@ -229,86 +190,83 @@
     }
   }
 
-  // ── Panel body — Flexbox three-column layout ──────────────────────────────
-  // Default (desktop): [presets 160px] [calendars flex] [time 210px]
-  // Modifier --no-time:    [presets 160px] [calendars flex]
-  // Modifier --date-time:  [calendar flex] [time selector]  (side by side, wrappable)
-  // Modifier --single-calendar: single child with padding
-  // Modifier --time-only:  centered single child
+  // ── Body — flex layout container ───────────────────────────────────────────
+  // Default (DateTimeRangePicker): [presets | calendars | time-panel]
+  // --no-time:         [presets | calendars]
+  // --date-time:       calendar stacked above time selector
+  // --single-calendar: padded single calendar
+  // --time-only:       centered time selector
+
   &__body {
     display: flex;
     flex-direction: row;
     align-items: stretch;
 
-    // Single date picker: calendar only, padded
     &--single-calendar {
       padding: 20px 24px;
     }
 
-     // Time-only picker: centered time selector
-     &--time-only {
-       padding: 24px;
-       justify-content: center;
-       align-items: center;
-     }
+    &--time-only {
+      padding: 24px;
+      justify-content: center;
+      align-items: center;
+    }
 
-     // Date-time picker: calendar + time stacked vertically
-     &--date-time {
-       flex-direction: column;
-       justify-content: center;
-       gap: 0;
-       padding: 20px 24px;
-     }
-
-    // Date-range-picker (--no-time) works automatically because
-    // .ngx-presets has flex: 0 0 160px and .ngx-panel__calendars has flex: 1 1 auto
+    &--date-time {
+      flex-direction: column;
+      padding: 20px 24px;
+    }
   }
+
+  // ── Content areas ──────────────────────────────────────────────────────────
 
   &__calendars {
     flex: 1 1 auto;
-    padding: 20px 24px;
     display: flex;
     gap: 24px;
+    padding: 20px 24px;
     overflow-x: auto;
   }
 
   &__time-panel {
     flex: 0 0 210px;
-    padding: 20px;
-    border-left: 1px solid var(--ngx-divider);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
+    padding: 20px;
+    border-left: 1px solid var(--ngx-divider);
     background: var(--ngx-surface-2);
   }
 
   &__time-label {
+    margin: 0 0 10px;
     font-size: var(--ngx-font-size-xs);
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--ngx-text-muted);
-    margin: 0 0 10px 0;
-    font-weight: 600;
   }
 
   &__duration {
+    margin-top: auto;
+    padding: 8px 10px;
     font-size: 12.5px;
     color: var(--ngx-text-muted);
     background: var(--ngx-surface-offset);
-    padding: 8px 10px;
     border-radius: var(--ngx-radius-sm);
-    margin-top: auto;
   }
+
+  // ── Footer ─────────────────────────────────────────────────────────────────
 
   &__footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 12px;
     padding: 16px 24px;
     border-top: 1px solid var(--ngx-divider);
     background: var(--ngx-surface-2);
-    gap: 12px;
     flex-wrap: wrap;
   }
 
@@ -321,14 +279,13 @@
   }
 
   &__actions {
+    flex: none;
     display: flex;
     gap: 10px;
-    flex: none;
   }
 }
 
-// ── Presets panel ─────────────────────────────────────────────────────────────
-// flex: 0 0 160px — fixed sidebar width within the Flexbox panel body
+// ── Presets sidebar ───────────────────────────────────────────────────────────
 .ngx-presets {
   flex: 0 0 160px;
   display: flex;
@@ -341,20 +298,18 @@
   &__btn {
     text-align: left;
     padding: 9px 10px;
-    border-radius: var(--ngx-radius-sm);
     border: none;
+    border-radius: var(--ngx-radius-sm);
     background: transparent;
     color: var(--ngx-text);
     font-size: var(--ngx-font-size-sm);
     font-weight: 500;
-    cursor: pointer;
-    transition: background var(--ngx-transition);
     font-family: var(--ngx-font-family);
     white-space: nowrap;
+    cursor: pointer;
+    transition: background var(--ngx-transition);
 
-    &:hover {
-      background: var(--ngx-primary-light);
-    }
+    &:hover { background: var(--ngx-primary-light); }
 
     &--active {
       background: var(--ngx-primary-highlight);
@@ -382,23 +337,23 @@
 
   &__month-title {
     flex: 1;
-    font-weight: 600;
     font-size: var(--ngx-font-size-base);
+    font-weight: 600;
     color: var(--ngx-text);
     text-align: center;
   }
 
   &__nav-btn {
-    width: 28px;
-    height: 28px;
-    border: none;
-    background: transparent;
-    border-radius: var(--ngx-radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: var(--ngx-radius-sm);
+    background: transparent;
     color: var(--ngx-text-faint);
+    cursor: pointer;
     transition: background var(--ngx-transition), color var(--ngx-transition);
 
     &:hover {
@@ -413,16 +368,14 @@
   }
 
   &__nav-spacer {
+    flex: none;
     width: 28px;
     height: 28px;
-    flex: none;
   }
 
-  // ── Flexbox-based 7-column calendar grid ───────────────────────────────────
-  // Each weekday header and day cell occupies (100% - 6 gaps) / 7 of the row.
-  // --_total-gap = (columns - 1) × gap = 6 × 2px = 12px
+  // 7-column flex grid — each cell = (100% − 6 × 2 px gap) / 7
   &__grid {
-    --_total-gap: 12px;
+    --_total-gap: 12px; // (7 − 1) columns × 2 px gap
     display: flex;
     flex-wrap: wrap;
     gap: 2px;
@@ -431,29 +384,29 @@
 
   &__weekday {
     flex: 0 0 calc((100% - var(--_total-gap, 12px)) / 7);
-    font-size: var(--ngx-font-size-xs);
-    color: var(--ngx-text-faint);
-    font-weight: 600;
     padding-bottom: 6px;
+    font-size: var(--ngx-font-size-xs);
+    font-weight: 600;
+    color: var(--ngx-text-faint);
   }
 
   &__day {
     position: relative;
     flex: 0 0 calc((100% - var(--_total-gap, 12px)) / 7);
-    font-size: var(--ngx-font-size-sm);
-    padding: 0;
     aspect-ratio: 1;
-    border: none;
-    background: transparent;
-    border-radius: var(--ngx-radius-sm);
-    color: var(--ngx-text);
-    cursor: pointer;
-    font-family: var(--ngx-font-family);
-    transition: background var(--ngx-transition), color var(--ngx-transition);
+    min-height: var(--ngx-calendar-cell-size);
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: var(--ngx-calendar-cell-size);
+    padding: 0;
+    border: none;
+    border-radius: var(--ngx-radius-sm);
+    background: transparent;
+    color: var(--ngx-text);
+    font-size: var(--ngx-font-size-sm);
+    font-family: var(--ngx-font-family);
+    cursor: pointer;
+    transition: background var(--ngx-transition), color var(--ngx-transition);
 
     &:hover:not(&--disabled):not(&--range-start):not(&--range-end):not(&--selected) {
       background: var(--ngx-primary-light);
@@ -466,10 +419,11 @@
       z-index: 1;
     }
 
-De    &--placeholder {
+    // Adjacent-month cells stay in the flex grid (maintain column alignment)
+    // but are invisible — use visibility:hidden, not display:none
+    &--placeholder {
       visibility: hidden;
       pointer-events: none;
-      cursor: default;
     }
 
     &--today {
@@ -480,11 +434,10 @@ De    &--placeholder {
     &--selected {
       background: var(--ngx-primary) !important;
       color: var(--ngx-text-inverse) !important;
-      border-radius: var(--ngx-radius-sm);
     }
 
+    // Single-day range (start == end)
     &--range-single {
-      // Start and end are the same day — full rounded corners
       background: var(--ngx-primary) !important;
       color: var(--ngx-text-inverse) !important;
       border-radius: var(--ngx-radius-sm) !important;
@@ -504,8 +457,8 @@ De    &--placeholder {
 
     &--in-range {
       background: var(--ngx-primary-highlight);
-      border-radius: 0;
       color: var(--ngx-primary-hover);
+      border-radius: 0;
     }
 
     &--disabled {
@@ -516,7 +469,7 @@ De    &--placeholder {
   }
 }
 
-// ── Time Selector ─────────────────────────────────────────────────────────────
+// ── Time selector ─────────────────────────────────────────────────────────────
 .ngx-time-selector {
   display: flex;
   align-items: center;
@@ -530,17 +483,17 @@ De    &--placeholder {
   }
 
   &__display {
-    background: var(--ngx-surface);
-    border: 1px solid var(--ngx-border);
-    border-radius: var(--ngx-radius-sm);
+    min-width: var(--ngx-time-segment-width);
     padding: 7px 8px;
     font-size: var(--ngx-font-size-base);
     font-weight: 600;
-    min-width: var(--ngx-time-segment-width);
-    text-align: center;
-    cursor: default;
     font-family: var(--ngx-font-family, monospace);
     color: var(--ngx-text);
+    text-align: center;
+    background: var(--ngx-surface);
+    border: 1px solid var(--ngx-border);
+    border-radius: var(--ngx-radius-sm);
+    cursor: default;
     transition: border-color var(--ngx-transition);
 
     &:focus-visible {
@@ -550,17 +503,17 @@ De    &--placeholder {
   }
 
   &__btn {
-    width: 24px;
-    height: 20px;
-    border: none;
-    background: transparent;
-    border-radius: var(--ngx-radius-xs);
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    color: var(--ngx-text-faint);
+    width: 24px;
+    height: 20px;
     padding: 0;
+    border: none;
+    border-radius: var(--ngx-radius-xs);
+    background: transparent;
+    color: var(--ngx-text-faint);
+    cursor: pointer;
     transition: background var(--ngx-transition), color var(--ngx-transition);
 
     &:hover {
@@ -574,25 +527,25 @@ De    &--placeholder {
   }
 
   &__sep {
-    color: var(--ngx-text-faint);
-    font-weight: 700;
+    padding-top: 4px; // Visual alignment with display boxes
     font-size: var(--ngx-font-size-md);
+    font-weight: 700;
     line-height: 1;
-    padding-top: 4px; // Align visually with display
+    color: var(--ngx-text-faint);
   }
 }
 
 // ── Buttons ───────────────────────────────────────────────────────────────────
 .ngx-btn {
   padding: 9px 18px;
+  border: 1.5px solid transparent;
   border-radius: var(--ngx-radius-md);
   font-size: var(--ngx-font-size-sm);
   font-weight: 600;
-  border: 1.5px solid transparent;
-  cursor: pointer;
   font-family: var(--ngx-font-family);
-  transition: background var(--ngx-transition), color var(--ngx-transition), border-color var(--ngx-transition);
   white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--ngx-transition), color var(--ngx-transition), border-color var(--ngx-transition);
 
   &:focus-visible {
     outline: 2px solid var(--ngx-primary);
@@ -627,7 +580,28 @@ De    &--placeholder {
   }
 }
 
-// ── Animation ─────────────────────────────────────────────────────────────────
+// ── DateTime Picker specific styles ────────────────────────────────────────────
+// DateTime Picker always shows result above buttons on all breakpoints
+.ngx-panel--date-time {
+  .ngx-panel__footer {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+
+  .ngx-panel__footer-preview {
+    margin-bottom: 12px;
+    text-align: center;
+    flex: 1;
+  }
+
+  .ngx-panel__actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+// ── Panel open animation ───────────────────────────────────────────────────────
 @keyframes ngx-panel-in {
   from {
     opacity: 0;
@@ -639,11 +613,12 @@ De    &--placeholder {
   }
 }
 
-// ── Responsive — mobile-first (375 px | 768 px | 1280 px+) ───────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Responsive — mobile (< 768 px) | tablet (768–1279 px) | desktop (≥ 1280 px)
+// ─────────────────────────────────────────────────────────────────────────────
 
-// ── Mobile (< 768 px) ─────────────────────────────────────────────────────────
 @include mobile {
-  // Trigger field — bigger touch targets
+  // Trigger — larger touch targets
   .ngx-picker-field {
     min-height: 48px;
     padding: 12px 14px;
@@ -654,7 +629,7 @@ De    &--placeholder {
     }
   }
 
-  // Panel — CSS-driven bottom-sheet (no JS for layout)
+  // Panel — CSS-only bottom-sheet (no JS for layout)
   .ngx-panel {
     position: fixed !important;
     inset: 0;
@@ -667,10 +642,10 @@ De    &--placeholder {
     min-width: 0 !important;
     border-radius: var(--ngx-radius-xl) var(--ngx-radius-xl) 0 0 !important;
     max-height: var(--ngx-panel-mobile-max-height, 90vh);
-    @include scrollable-y;
     padding-bottom: env(safe-area-inset-bottom, 0);
+    @include scrollable-y;
 
-    // Swipe-down / drag handle indicator
+    // Drag-handle indicator
     &::before {
       content: '';
       display: block;
@@ -682,32 +657,21 @@ De    &--placeholder {
     }
 
     &__header {
-      padding: 16px 16px 12px;
       position: sticky;
       top: 0;
       z-index: 10;
+      padding: 16px 16px 12px;
       background: var(--ngx-surface);
     }
 
-    // Body — stack all sections vertically on mobile
+    // All body layouts stack vertically on mobile
     &__body {
       flex-direction: column !important;
       padding: 0 !important;
-      gap: 0;
 
-       &--date-time {
-         flex-direction: column !important;
-         padding: 0 !important;
-         gap: 0 !important;
-       }
-
-      &--single-calendar {
-        padding: 12px 16px !important;
-      }
-
-      &--time-only {
-        padding: 24px 16px !important;
-      }
+      &--single-calendar { padding: 12px 16px !important; }
+      &--time-only       { padding: 24px 16px !important; }
+      &--date-time       { padding: 20px 16px !important; }
     }
 
     &__calendars {
@@ -716,7 +680,7 @@ De    &--placeholder {
       padding: 12px 16px;
     }
 
-    // Time panel — horizontal row on mobile, wraps if needed
+    // Time panel — horizontal wrapping row on mobile
     &__time-panel {
       flex: 0 0 auto;
       flex-direction: row;
@@ -728,11 +692,11 @@ De    &--placeholder {
       justify-content: space-around;
     }
 
+    // Footer — preview stacked above buttons on mobile (all picker types)
     &__footer {
-      padding: 12px 16px;
-      padding-bottom: calc(12px + env(safe-area-inset-bottom, 0));
       position: sticky;
       bottom: 0;
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0));
       background: var(--ngx-surface-2);
       flex-direction: column;
       align-items: stretch;
@@ -755,12 +719,12 @@ De    &--placeholder {
     flex: 0 0 auto;
     flex-direction: row;
     flex-wrap: wrap;
-    @include scrollable-x;
+    gap: 6px;
+    padding: 10px 16px;
     border-right: none;
     border-bottom: 1px solid var(--ngx-divider);
-    padding: 10px 16px;
-    gap: 6px;
     justify-content: space-around;
+    @include scrollable-x;
 
     &__btn {
       white-space: nowrap;
@@ -769,7 +733,7 @@ De    &--placeholder {
     }
   }
 
-  // Calendar cells — larger tap area on mobile (WCAG 2.5.5)
+  // Calendar — larger tap targets (WCAG 2.5.5)
   .ngx-calendar {
     min-width: 100%;
 
@@ -786,22 +750,45 @@ De    &--placeholder {
   }
 }
 
-// ── Tablet (768 px – 1279 px) ─────────────────────────────────────────────────
 @include tablet {
-  .ngx-panel{
+  .ngx-panel {
     max-width: 650px;
+
+    // Most layouts can wrap at constrained tablet widths
+    &__body {
+      flex-wrap: wrap;
+
+      // These manage their own children and must not wrap
+      &--single-calendar,
+      &--date-time {
+        flex-wrap: nowrap;
+      }
+    }
+
+    // Time panel — horizontal row at tablet
+    &__time-panel {
+      flex: 0 0 auto;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 16px;
+      border-left: none;
+      border-top: 1px solid var(--ngx-divider);
+      justify-content: space-around;
+      width: 100%;
+    }
   }
 
-  // Narrower sidebar and time panel at tablet
+  // Presets — horizontal scrollable row at tablet
   .ngx-presets {
     flex: 0 0 auto;
     flex-direction: row;
-    @include scrollable-x;
+    gap: 8px;
+    padding: 12px 16px;
     border-right: none;
     border-bottom: 1px solid var(--ngx-divider);
-    gap: 8px;
     justify-content: space-around;
-    padding: 12px 16px;
+    @include scrollable-x;
 
     &__btn {
       white-space: nowrap;
@@ -809,114 +796,134 @@ De    &--placeholder {
       font-size: var(--ngx-font-size-sm);
     }
   }
-
-   .ngx-panel {
-     &__time-panel {
-       flex: 0 0 auto;
-       flex-direction: row;
-       flex-wrap: wrap;
-       gap: 12px;
-       border-left: none;
-       border-top: 1px solid var(--ngx-divider);
-       padding: 16px;
-       justify-content: space-around;
-       width: 100%;
-     }
-
-     // Allow wrap at constrained tablet widths; individual modifier resets below
-     &__body {
-       flex-wrap: wrap;
-
-       // These layouts should not wrap — they manage their own children
-       &--single-calendar,
-       &--date-time {
-         flex-wrap: nowrap;
-       }
-     }
-
-     // DateRangePicker (--no-time): restore horizontal footer layout on tablet
-     &:has(.ngx-panel__body--no-time) {
-       .ngx-panel__footer {
-         flex-direction: row;
-         align-items: center;
-         justify-content: space-between;
-       }
-
-       .ngx-panel__footer-preview {
-         margin-bottom: 0;
-         flex: 1;
-         min-width: 0;
-       }
-
-       .ngx-panel__actions {
-         width: auto;
-         justify-content: flex-end;
-       }
-     }
-   }
 }
 
-// ── Desktop (≥ 1280 px) ───────────────────────────────────────────────────────
-// Restore full widths if viewport was resized from tablet
 @include desktop {
+  .ngx-panel {
+    &__body     { flex-wrap: nowrap; }
+    &__calendars { flex: 1 1 auto; min-width: 0; }
+
+    // Time panel — vertical sidebar on desktop
+    &__time-panel {
+      flex: 0 0 210px;
+      flex-direction: column;
+      gap: 20px;
+      padding: 20px;
+      border-left: 1px solid var(--ngx-divider);
+      border-top: none;
+      justify-content: flex-start;
+    }
+  }
+
+  // Presets — vertical sidebar on desktop
   .ngx-presets {
     flex: 0 0 160px;
     flex-direction: column;
     height: 100%;
-    border-bottom: none;
-    border-right: 1px solid var(--ngx-divider);
-    padding: 16px;
     gap: 4px;
+    padding: 16px;
+    border-right: 1px solid var(--ngx-divider);
+    border-bottom: none;
 
     &__btn {
       padding: 9px 10px;
       font-size: var(--ngx-font-size-sm);
     }
   }
+}
 
+// ── Angular Material mat-form-field integration ───────────────────────────────
+// When NgxMatFormFieldDirective is applied, the host element gets .ngx-mat-control.
+// Strip the picker's own visual container so mat-form-field provides the border.
+.ngx-mat-control {
+  display: block;
+  width: 100%;
+  overflow: visible !important;
+  position: relative;
+
+  .ngx-picker-field {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    padding: 6px 2px;
+    min-height: 0;
+    width: 100%;
+    position: relative;
+    overflow: visible;
+
+    // Override focus/hover ring — mat-form-field handles that visually
+    &:hover:not(&--disabled),
+    &:focus-visible,
+    &--open {
+      border-color: transparent;
+      box-shadow: none;
+    }
+  }
+
+  // The panel must stay fully opaque and above the Material form-field chrome.
+  // The JS in NgxMatFormFieldDirective removes overflow:hidden / will-change from
+  // the .mdc-text-field wrapper, but we add these as a CSS safety net too.
   .ngx-panel {
-    &__body {
-      flex-wrap: nowrap;
-    }
-
-    &__calendars {
-      flex: 1 1 auto;
-      min-width: 0;
-    }
-
-    &__time-panel {
-      flex: 0 0 210px;
-      flex-direction: column;
-      border-left: 1px solid var(--ngx-divider);
-      border-top: none;
-      padding: 20px;
-      gap: 20px;
-      justify-content: flex-start;
-    }
-
-    // DateRangePicker (--no-time): restore horizontal footer layout on desktop
-    &:has(.ngx-panel__body--no-time) {
-      .ngx-panel__footer {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      .ngx-panel__footer-preview {
-        margin-bottom: 0;
-        flex: 1;
-        min-width: 0;
-      }
-
-      .ngx-panel__actions {
-        width: auto;
-        justify-content: flex-end;
-      }
-    }
+    // Explicit solid background — guards against any background inheritance from Material
+    background: var(--ngx-surface, #fff) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    // Raise above Material's outline notch (z-index: 1) and other internal elements
+    z-index: var(--ngx-z-panel-material) !important;
+    // Explicit solid border and shadow so the panel is never invisible
+    border: 1px solid var(--ngx-border) !important;
+    box-shadow: var(--ngx-shadow-lg) !important;
+    pointer-events: auto !important;
   }
 }
 
-// ── Touch devices — ensure minimum tap targets ─────────────────────────────────
+// Elevate the active Material form field above its siblings while the inline
+// picker panel is open. This prevents adjacent MDC layers from painting over
+// the panel background and making it appear transparent.
+//
+// Stacking order (when picker is open):
+//   1. Panel (--ngx-z-panel-material: 1200)  — Top layer, always visible
+//   2. ngx-control (--ngx-z-control: 1002)   — Picker wrapper above form-field
+//   3. mat-form-field (--ngx-z-form-field-open: 1001) — Form field container
+//   4. Hints/Errors (--ngx-z-hint-hidden: -1) — Behind panel, disabled
+mat-form-field.ngx-mat-form-field--panel-open,
+mat-form-field:has(.ngx-picker-field--open) {
+  position: relative;
+  isolation: isolate;
+  z-index: var(--ngx-z-form-field-open);
+
+  .ngx-mat-control {
+    z-index: var(--ngx-z-control);
+  }
+
+  .mat-mdc-form-field-subscript-wrapper,
+  .mat-mdc-form-field-hint-wrapper,
+  .mat-mdc-form-field-error-wrapper {
+    position: relative;
+    z-index: var(--ngx-z-hint-hidden);
+    pointer-events: none;
+  }
+}
+
+// CSS-level safety net: override Angular Material's overflow:hidden and
+// will-change stacking context on any mat-form-field that wraps an ngx picker.
+// The NgxMatFormFieldDirective also patches these at runtime via JavaScript
+// (walk + getComputedStyle), but this CSS rule fires earlier (before first paint).
+// !important is required to override Material's own !important rules if any.
+// stylelint-disable-next-line selector-max-specificity
+mat-form-field:has(.ngx-mat-control) {
+  .mat-mdc-text-field-wrapper,
+  .mdc-text-field {
+    overflow: visible !important;
+    will-change: auto !important;
+  }
+
+  .mat-mdc-form-field-flex {
+    overflow: visible !important;
+  }
+}
+
+// ── Touch devices — minimum tap targets (WCAG 2.5.5) ──────────────────────────
 @include touch-device {
   .ngx-calendar__nav-btn,
   .ngx-presets__btn,

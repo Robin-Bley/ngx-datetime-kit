@@ -33,7 +33,7 @@
   </div>
 
   <div class="ngx-calendar__grid" role="row">
-    @for (weekday of weekdayNames(); track weekday) {
+    @for (weekday of weekdayNames(); track $index) {
       <div
         class="ngx-calendar__weekday"
         role="columnheader"

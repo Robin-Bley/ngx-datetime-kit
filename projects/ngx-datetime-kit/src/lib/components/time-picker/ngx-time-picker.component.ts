@@ -2,6 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
+  ElementRef,
   forwardRef,
   inject,
   input,
@@ -13,6 +15,7 @@ import { NGX_LABELS } from '../../tokens/labels.token';
 import { NGX_DATE_TIME_FORMATS } from '../../tokens/date-time-formats.token';
 import { TimeValue, createTimeValue, formatTimeValue } from '../../models/time-value.model';
 import { NgxTimeSelectorComponent } from '../shared/time-selector/ngx-time-selector.component';
+import { NgxPickerPanelCoordinatorService } from '../shared/picker-panel/ngx-picker-panel-coordinator.service';
 
 /**
  * Time-only picker. Opens a panel with a time selector.
@@ -31,8 +34,11 @@ import { NgxTimeSelectorComponent } from '../shared/time-selector/ngx-time-selec
   styleUrl: './ngx-time-picker.component.scss',
 })
 export class NgxTimePickerComponent implements ControlValueAccessor {
+  private readonly elementRef: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly formats = inject(NGX_DATE_TIME_FORMATS);
   protected readonly labels = inject(NGX_LABELS);
+  private readonly panelCoordinator: NgxPickerPanelCoordinatorService = inject(NgxPickerPanelCoordinatorService);
 
   public readonly value = model<TimeValue | null>(null);
   public readonly placeholder = input<string>('');
@@ -58,6 +64,12 @@ export class NgxTimePickerComponent implements ControlValueAccessor {
   private onChange: (value: TimeValue | null) => void = () => {};
   private onTouched: () => void = () => {};
 
+  constructor() {
+    this.destroyRef.onDestroy((): void => {
+      this.panelCoordinator.unregister(this);
+    });
+  }
+
   writeValue(value: TimeValue | null): void {
     this.value.set(value);
   }
@@ -74,22 +86,38 @@ export class NgxTimePickerComponent implements ControlValueAccessor {
 
   protected togglePanel(): void {
     if (this.disabled()) {
+
       return;
     }
-    this.isOpen() ? this.cancelPanel() : this.openPanel();
+
+    if (this.isOpen()) {
+      this.cancelPanel();
+
+      return;
+    }
+
+    this.openPanel();
   }
 
   protected openPanel(): void {
-    if (this.disabled()) {
+    if (this.disabled() || this.isOpen()) {
+
       return;
     }
+
     this.pendingTime.set(this.value() ?? createTimeValue(0, 0, 0));
     this.isOpen.set(true);
+    this.panelCoordinator.requestOpen(
+      this,
+      this.elementRef.nativeElement,
+      (): void => {
+        this.closePanelInternal(true);
+      },
+    );
   }
 
   protected cancelPanel(): void {
-    this.isOpen.set(false);
-    this.onTouched();
+    this.closePanelInternal(true);
   }
 
   protected applyPanel(): void {
@@ -97,7 +125,7 @@ export class NgxTimePickerComponent implements ControlValueAccessor {
     this.value.set(nextTime);
     this.onChange(nextTime);
     this.onTouched();
-    this.isOpen.set(false);
+    this.closePanelInternal(false);
   }
 
   protected clearValue(event: MouseEvent): void {
@@ -105,5 +133,14 @@ export class NgxTimePickerComponent implements ControlValueAccessor {
     this.value.set(null);
     this.onChange(null);
     this.onTouched();
+  }
+
+  private closePanelInternal(markAsTouched: boolean): void {
+    this.isOpen.set(false);
+    this.panelCoordinator.notifyClosed(this);
+
+    if (markAsTouched) {
+      this.onTouched();
+    }
   }
 }

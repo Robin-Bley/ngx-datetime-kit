@@ -38,6 +38,11 @@
     "@angular/forms": "^22.0.0",
     "@angular/cdk": "^22.0.0"
   },
+  "peerDependenciesMeta": {
+    "@angular/material": {
+      "optional": true
+    }
+  },
   "dependencies": {},
   "sideEffects": false
 }

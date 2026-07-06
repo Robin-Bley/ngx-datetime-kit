@@ -2,6 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
+  ElementRef,
   forwardRef,
   inject,
   input,
@@ -14,6 +16,7 @@ import { NGX_DATE_TIME_ADAPTER } from '../../tokens/date-time-adapter.token';
 import { NGX_DATE_TIME_FORMATS } from '../../tokens/date-time-formats.token';
 import { NGX_LABELS } from '../../tokens/labels.token';
 import { NgxCalendarComponent } from '../shared/calendar/ngx-calendar.component';
+import { NgxPickerPanelCoordinatorService } from '../shared/picker-panel/ngx-picker-panel-coordinator.service';
 
 /**
  * Date-only picker. Opens a single calendar in a panel.
@@ -33,8 +36,11 @@ import { NgxCalendarComponent } from '../shared/calendar/ngx-calendar.component'
 })
 export class NgxDatePickerComponent<D> implements ControlValueAccessor {
   private readonly adapter: NgxDateTimeAdapter<D> = inject<NgxDateTimeAdapter<D>>(NGX_DATE_TIME_ADAPTER as never);
+  private readonly elementRef: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly formats = inject(NGX_DATE_TIME_FORMATS);
   protected readonly labels = inject(NGX_LABELS);
+  private readonly panelCoordinator: NgxPickerPanelCoordinatorService = inject(NgxPickerPanelCoordinatorService);
   private readonly today = this.adapter.today();
 
   public readonly value = model<D | null>(null);
@@ -63,6 +69,12 @@ export class NgxDatePickerComponent<D> implements ControlValueAccessor {
   private onChange: (value: D | null) => void = () => {};
   private onTouched: () => void = () => {};
 
+  constructor() {
+    this.destroyRef.onDestroy((): void => {
+      this.panelCoordinator.unregister(this);
+    });
+  }
+
   writeValue(value: D | null): void {
     this.value.set(value);
   }
@@ -79,31 +91,47 @@ export class NgxDatePickerComponent<D> implements ControlValueAccessor {
 
   protected togglePanel(): void {
     if (this.disabled()) {
+
       return;
     }
-    this.isOpen() ? this.closePanel() : this.openPanel();
+
+    if (this.isOpen()) {
+      this.closePanel();
+
+      return;
+    }
+
+    this.openPanel();
   }
 
   protected openPanel(): void {
-    if (this.disabled()) {
+    if (this.disabled() || this.isOpen()) {
+
       return;
     }
+
     const referenceDate: D = this.value() ?? this.adapter.today();
     this.viewMonth.set(this.adapter.getMonth(referenceDate));
     this.viewYear.set(this.adapter.getYear(referenceDate));
     this.isOpen.set(true);
+    this.panelCoordinator.requestOpen(
+      this,
+      this.elementRef.nativeElement,
+      (): void => {
+        this.closePanelInternal(true);
+      },
+    );
   }
 
   protected closePanel(): void {
-    this.isOpen.set(false);
-    this.onTouched();
+    this.closePanelInternal(true);
   }
 
   protected onDaySelected(date: D): void {
     this.value.set(date);
     this.onChange(date);
     this.onTouched();
-    this.closePanel();
+    this.closePanelInternal(false);
   }
 
   protected clearValue(event: MouseEvent): void {
@@ -127,5 +155,14 @@ export class NgxDatePickerComponent<D> implements ControlValueAccessor {
 
     this.viewMonth.set(nextMonth);
     this.viewYear.set(nextYear);
+  }
+
+  private closePanelInternal(markAsTouched: boolean): void {
+    this.isOpen.set(false);
+    this.panelCoordinator.notifyClosed(this);
+
+    if (markAsTouched) {
+      this.onTouched();
+    }
   }
 }

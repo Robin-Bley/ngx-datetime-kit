@@ -1,0 +1,148 @@
+<div class="demo-page">
+  <div class="demo-hero">
+    <h1 class="demo-hero__title">Angular Material Integration</h1>
+    <p class="demo-hero__subtitle">
+      Import <code>NgxMatFormFieldDirective</code> to use any picker inside
+      <code>&lt;mat-form-field&gt;</code>. The directive applies automatically
+      via element selector — no extra attribute needed.
+    </p>
+  </div>
+
+  <mat-divider />
+
+  <!-- ── Section 1: Basic usage ─────────────────────────────────────────── -->
+  <section class="demo-section">
+    <h2 class="demo-section__title">Basic usage</h2>
+    <p class="demo-section__desc">
+      Every picker automatically adapts to Angular Material's visual container.
+      The floating label and error messages are handled by <code>mat-form-field</code>.
+    </p>
+
+    <form [formGroup]="basicForm" (ngSubmit)="onBasicSubmit()" class="demo-mat-form" novalidate>
+      <!-- Date Picker -->
+      <mat-form-field appearance="outline" class="demo-mat-field">
+        <mat-label>Date (required)</mat-label>
+        <ngx-date-picker formControlName="date" />
+        <mat-error>Please select a date.</mat-error>
+      </mat-form-field>
+
+      <!-- Date-Time Picker -->
+      <mat-form-field appearance="outline" class="demo-mat-field">
+        <mat-label>Date &amp; Time</mat-label>
+        <ngx-date-time-picker formControlName="dateTime" />
+        <mat-hint>Optional — no validation applied</mat-hint>
+      </mat-form-field>
+
+      <div class="demo-mat-actions">
+        <button mat-stroked-button type="button" (click)="toggleDisabled()">
+          {{ isDateDisabled ? 'Enable date' : 'Disable date' }}
+        </button>
+        <button mat-flat-button color="primary" type="submit">
+          Validate &amp; Submit
+        </button>
+      </div>
+
+      @if (basicForm.valid && basicForm.dirty) {
+        <div class="demo-value">
+          <strong>Value:</strong> {{ basicForm.value | json }}
+        </div>
+      }
+    </form>
+  </section>
+
+  <mat-divider />
+
+  <!-- ── Section 2: Range pickers ───────────────────────────────────────── -->
+  <section class="demo-section">
+    <h2 class="demo-section__title">Range &amp; DateTime Range pickers</h2>
+    <p class="demo-section__desc">
+      The wider range pickers also work inside <code>mat-form-field</code>.
+      The picker panel opens as usual — <code>mat-form-field</code> only
+      wraps the trigger field.
+    </p>
+
+    <form [formGroup]="rangeForm" (ngSubmit)="onRangeSubmit()" class="demo-mat-form" novalidate>
+      <!-- Date Range Picker -->
+      <mat-form-field appearance="outline" class="demo-mat-field demo-mat-field--wide">
+        <mat-label>Date range (required)</mat-label>
+        <ngx-date-range-picker
+          formControlName="range"
+          [minDate]="minDate"
+        />
+        <mat-error>
+          @if (rangeForm.get('range')?.errors?.['required']) {
+            Please select a date range.
+          } @else if (rangeForm.get('range')?.errors?.['ngxDateRange']) {
+            Start date must be before end date.
+          }
+        </mat-error>
+        <mat-hint>Select start and end date, then press Apply</mat-hint>
+      </mat-form-field>
+
+      <!-- DateTime Range Picker -->
+      <mat-form-field appearance="outline" class="demo-mat-field demo-mat-field--wide">
+        <mat-label>DateTime range</mat-label>
+        <ngx-date-time-range-picker formControlName="fullRange" />
+        <mat-hint>Includes time selection and presets</mat-hint>
+      </mat-form-field>
+
+      <div class="demo-mat-actions">
+        <button mat-stroked-button type="button" (click)="rangeForm.reset()">
+          Reset
+        </button>
+        <button mat-flat-button color="primary" type="submit">
+          Validate &amp; Submit
+        </button>
+      </div>
+
+      @if (rangeForm.valid && rangeForm.dirty) {
+        <div class="demo-value">
+          <strong>Value:</strong> {{ rangeForm.value | json }}
+        </div>
+      }
+    </form>
+  </section>
+
+  <mat-divider />
+
+  <!-- ── Section 3: Code reference ──────────────────────────────────────── -->
+  <section class="demo-section">
+    <h2 class="demo-section__title">Setup</h2>
+    <p class="demo-section__desc">
+      Three steps to enable Angular Material integration in your application:
+    </p>
+
+    <ol class="demo-steps">
+      <li>
+        <strong>Install peer dependency:</strong>
+        <code class="demo-code-inline">npm install &#64;angular/material</code>
+      </li>
+      <li>
+        <strong>Import the directive</strong> alongside your picker components and
+        Angular Material form-field:
+        <pre class="demo-code-block"><code>import &#123;
+  NgxDatePickerComponent,
+  NgxMatFormFieldDirective,
+&#125; from 'ngx-datetime-kit';
+import &#123; MatFormFieldModule &#125; from '&#64;angular/material/form-field';
+
+&#64;Component(&#123;
+  imports: [
+    MatFormFieldModule,
+    NgxDatePickerComponent,
+    NgxMatFormFieldDirective, // ← activates automatically
+  ],
+&#125;)</code></pre>
+      </li>
+      <li>
+        <strong>Use inside a form field:</strong>
+        <pre class="demo-code-block"><code>&lt;mat-form-field appearance="outline"&gt;
+  &lt;mat-label&gt;Booking date&lt;/mat-label&gt;
+  &lt;ngx-date-picker [formControl]="dateCtrl"&gt;&lt;/ngx-date-picker&gt;
+  &lt;mat-error&gt;Required&lt;/mat-error&gt;
+&lt;/mat-form-field&gt;</code></pre>
+      </li>
+    </ol>
+  </section>
+</div>
+

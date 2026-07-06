@@ -32,6 +32,13 @@ export const routes: Routes = [
       import('./pages/i18n/i18n.component').then((m) => m.I18nPageComponent),
   },
   {
+    path: 'angular-material',
+    loadComponent: () =>
+      import('./pages/angular-material/angular-material.component').then(
+        (m) => m.AngularMaterialPageComponent,
+      ),
+  },
+  {
     path: '**',
     redirectTo: 'overview',
   },

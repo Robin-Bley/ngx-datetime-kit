@@ -66,9 +66,10 @@ export function buildCalendarGrid<D>(
     });
   }
 
-  // Trailing days to complete the last row (always fill to 6 rows = 42 cells)
-  const totalCells: number = 42;
-  while (cells.length < totalCells) {
+  // Trailing days to complete the last row.
+  // Only pad to the next multiple of 7 — never force 6 rows when fewer suffice.
+  const neededCells: number = Math.ceil((dayOffset + numDays) / 7) * 7;
+  while (cells.length < neededCells) {
     const lastDate: D = cells[cells.length - 1].date;
     cells.push({
       date: adapter.addDays(lastDate, 1),
