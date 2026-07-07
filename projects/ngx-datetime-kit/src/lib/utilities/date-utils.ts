@@ -67,8 +67,8 @@ export function buildCalendarGrid<D>(
   }
 
   // Trailing days to complete the last row.
-  // Only pad to the next multiple of 7 — never force 6 rows when fewer suffice.
-  const neededCells: number = Math.ceil((dayOffset + numDays) / 7) * 7;
+  // Always ensure a full 6-week (42-cell) grid for consistent layout.
+  const neededCells: number = Math.max(42, Math.ceil((dayOffset + numDays) / 7) * 7);
   while (cells.length < neededCells) {
     const lastDate: D = cells[cells.length - 1].date;
     cells.push({
