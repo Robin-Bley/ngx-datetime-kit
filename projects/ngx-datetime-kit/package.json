@@ -10,6 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/Robin-Bley/ngx-datetime-kit.git"
   },
+  "readme": "../../README.md",
   "homepage": "https://github.com/Robin-Bley/ngx-datetime-kit#readme",
   "bugs": {
     "url": "https://github.com/Robin-Bley/ngx-datetime-kit/issues"
@@ -24,13 +25,10 @@
     "datetime-range-picker",
     "angular-component",
     "angular-library",
-    "a11y",
-    "accessibility",
     "i18n",
-    "signal-forms",
-    "reactive-forms",
-    "overlay",
-    "cdk"
+    "cdk",
+    "material",
+    "angular-material"
   ],
   "peerDependencies": {
     "@angular/common": "^22.0.0",
