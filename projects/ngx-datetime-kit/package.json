@@ -1,6 +1,6 @@
 {
   "name": "ngx-datetime-kit",
-  "version": "0.1.0",
+  "version": "22.0.0",
   "description": "Production-ready Angular library for Date, Time, DateTime, and Range Picker components with full accessibility, i18n, and dual Forms support (Reactive + Signal).",
   "author": {
     "name": "Robin Bley",

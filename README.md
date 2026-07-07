@@ -9,8 +9,15 @@ Production-ready Angular 22+ library for **Date**, **Time**, **DateTime**, **Dat
 
 > 🚀 This library is still new. Feedback is very welcome and improvements will be implemented as quickly as possible. Pull requests are also highly appreciated and will be reviewed promptly.
 
-> 📸 **Screenshot placeholder**
-> ![DateTime Range Picker](docs/assets/preview.png)
+## 📸 Screenshots
+
+| Date Picker | Time Picker | DateTime Picker |
+|---|---|---|
+| ![Date Picker](docs/assets/date-preview.png) | ![Time Picker](docs/assets/time-preview.png) | ![DateTime Picker](docs/assets/datetime-preview.png) |
+
+| Date Range Picker | DateTime Range Picker | Angular Material Integration |
+|---|---|---|
+| ![Date Range Picker](docs/assets/date-range-preview.png) | ![DateTime Range Picker](docs/assets/datetime-range-preview.png) | ![Angular Material](docs/assets/angular-materia-preview.png) |
 
 ## Live Demo
 
